@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.zip.Inflater;
 
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.logout_menu_item:
                 sharedPreferencesHelper.setEmail("");
                 sharedPreferencesHelper.setPassword("");
+                Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
+                goToLoginActivity();
         }
 
         return super.onOptionsItemSelected(item);
