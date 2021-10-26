@@ -32,11 +32,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        if(sharedPreferencesHelper.getEmail().equals("")){
+        if(sharedPreferencesHelper.getUsername().equals("")){
             goToLoginActivity();
         }
         else{
-            welcomeMessage.setText("Welcome, " + sharedPreferencesHelper.getEmail() + "!");
+            welcomeMessage.setText("Welcome, " + sharedPreferencesHelper.getUsername() + "!");
         }
     }
 
@@ -52,8 +52,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.logout_menu_item:
-                sharedPreferencesHelper.setEmail("");
-                sharedPreferencesHelper.setPassword("");
+                // TODO: logout
         }
 
         return super.onOptionsItemSelected(item);

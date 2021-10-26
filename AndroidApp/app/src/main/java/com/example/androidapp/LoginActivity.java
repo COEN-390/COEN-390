@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import io.appwrite.exceptions.AppwriteException;
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText;
@@ -41,8 +43,7 @@ public class LoginActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
-                sharedPreferencesHelper.setEmail(email);
-                sharedPreferencesHelper.setPassword(password);
+                sharedPreferencesHelper.createSession(email, password);
 
                 goToMainActivity();
             }
