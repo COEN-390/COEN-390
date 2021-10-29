@@ -53,8 +53,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.logout_menu_item:
-                sharedPreferencesHelper.setEmail("");
-                sharedPreferencesHelper.setPassword("");
+                sharedPreferencesHelper.endSession();
                 Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
                 goToLoginActivity();
         }

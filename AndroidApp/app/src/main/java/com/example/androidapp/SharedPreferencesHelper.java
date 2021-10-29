@@ -45,11 +45,6 @@ public class SharedPreferencesHelper {
         return this.sharedPreferences.getString(this.context.getString(R.string.Shared_Preferences_Username), "");
     }
 
-//    private void setUsername(String username){
-//        this.editor.putString(this.context.getString(R.string.Shared_Preferences_Username), username);
-//        this.editor.apply();
-//    }
-
     public void createSession(String email, String password) {
         // Create the session
         try {
@@ -91,6 +86,40 @@ public class SharedPreferencesHelper {
         } catch (AppwriteException e) {
             e.printStackTrace();
         }
+    }
+
+    public void endSession(){
+        try {
+            account.deleteSession(
+                    "[SESSION_ID]",
+                    new Continuation<Object>() {
+                        @NotNull
+                        @Override
+                        public CoroutineContext getContext() {
+                            return EmptyCoroutineContext.INSTANCE;
+                        }
+
+                        @Override
+                        public void resumeWith(@NotNull Object o) {
+                            String json = "";
+                            try {
+                                if (o instanceof Result.Failure) {
+                                    Result.Failure failure = (Result.Failure) o;
+                                    throw failure.exception;
+                                } else {
+                                    Response response = (Response) o;
+                                    json = response.body().string();
+                                }
+                            } catch (Throwable th) {
+                                Log.e("ERROR", "Unable to end session");
+                            }
+                        }
+                    }
+            );
+        } catch (AppwriteException e) {
+            e.printStackTrace();
+        }
+        this.editor.putString(this.context.getString(R.string.Shared_Preferences_Username), "");
     }
 
     private void storeUsername() throws AppwriteException{
