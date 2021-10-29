@@ -51,10 +51,6 @@ public class SharedPreferencesHelper {
         this.user = this._user;
     }
 
-    public String getUsername(){
-        return this.sharedPreferences.getString(this.context.getString(R.string.Shared_Preferences_Username), "");
-    }
-
     public void createSession(String email, String password) {
         // Create the session
         try {
@@ -70,13 +66,12 @@ public class SharedPreferencesHelper {
 
                         @Override
                         public void resumeWith(@NotNull Object o) {
-                            String json = "";
                             try {
                                 if (o instanceof Result.Failure) {
                                     Result.Failure failure = (Result.Failure) o;
                                     throw failure.exception;
                                 } else {
-                                    storeUsername();
+                                    getAccount();
                                 }
                             } catch (AppwriteException e){
                                 System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
@@ -110,14 +105,12 @@ public class SharedPreferencesHelper {
 
                         @Override
                         public void resumeWith(@NotNull Object o) {
-                            String json = "";
                             try {
                                 if (o instanceof Result.Failure) {
                                     Result.Failure failure = (Result.Failure) o;
                                     throw failure.exception;
                                 } else {
-                                    Response response = (Response) o;
-                                    json = response.body().string();
+                                    _user.postValue(null);
                                 }
                             } catch (AppwriteException e){
                                 System.out.println("endSession() " + new Timestamp(System.currentTimeMillis()));
@@ -136,11 +129,9 @@ public class SharedPreferencesHelper {
             System.out.println(e.getCode());
             System.out.println(e.getResponse());
         }
-        this.editor.putString(this.context.getString(R.string.Shared_Preferences_Username), "");
-        this._user.setValue(null);
     }
 
-    private void storeUsername() {
+    private void getAccount() {
         try {
             account.get(
                     new Continuation<Object>() {
@@ -180,15 +171,9 @@ public class SharedPreferencesHelper {
             System.out.println(e.getCode());
             System.out.println(e.getResponse());
         }
-        if(!user.getValue().equals(null)) {
-            try {
-                this.editor.putString(this.context.getString(R.string.Shared_Preferences_Username), user.getValue().getString("name"));
-            } catch (JSONException e) {
-                e.printStackTrace();
-                Log.e("ERROR", "Unable to get username");
-            }
-        }
-        else this.editor.putString(this.context.getString(R.string.Shared_Preferences_Username), "");
-        this.editor.apply();
+    }
+
+    public LiveData<JSONObject> getUser(){
+        return this.user;
     }
 }

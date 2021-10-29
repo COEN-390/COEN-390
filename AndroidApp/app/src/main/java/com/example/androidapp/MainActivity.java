@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,18 +29,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         setupUI();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if(sharedPreferencesHelper.getUsername().equals("")){
-            goToLoginActivity();
-        }
-        else{
-            welcomeMessage.setText("Welcome, " + sharedPreferencesHelper.getUsername() + "!");
-        }
     }
 
     @Override
@@ -69,7 +59,18 @@ public class MainActivity extends AppCompatActivity {
         actionBar.show();
         actionBar.setHomeButtonEnabled(false);
 
-
+        sharedPreferencesHelper.getUser().observe(this, jsonObject ->{
+            if(sharedPreferencesHelper.getUser().getValue() != null){
+                try {
+                    welcomeMessage.setText("Welcome, " + sharedPreferencesHelper.getUser().getValue().getString("name") + "!");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            else{
+                goToLoginActivity();
+            }
+        });
     }
 
     private void goToLoginActivity(){
