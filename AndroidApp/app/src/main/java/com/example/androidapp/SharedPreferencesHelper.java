@@ -180,7 +180,7 @@ public class SharedPreferencesHelper {
             System.out.println(e.getCode());
             System.out.println(e.getResponse());
         }
-        if(user.getValue().equals(null)) {
+        if(!user.getValue().equals(null)) {
             try {
                 this.editor.putString(this.context.getString(R.string.Shared_Preferences_Username), user.getValue().getString("name"));
             } catch (JSONException e) {
