@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">AndroidApp</string>
+    <string name="app_name">Mask Detection App</string>
     <string name="Shared_Preferences">SharedPreferences</string>
     <string name="Shared_Preferences_Email">username</string>
     <string name="Shared_Preferences_Password">password</string>
