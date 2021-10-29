@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "908882690166",
+    "project_id": "mask-detection-95d5a",
+    "storage_bucket": "mask-detection-95d5a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:908882690166:android:e38b10eaeb15c1779a1f57",
+        "android_client_info": {
+          "package_name": "com.example.androidapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "908882690166-8hslehjicp65b6vjq4cnvllf278utib7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnHrI8Zf2edtYFnzain5T-VdevH0-g-us"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "908882690166-8hslehjicp65b6vjq4cnvllf278utib7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

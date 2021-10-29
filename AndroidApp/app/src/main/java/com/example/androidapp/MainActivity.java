@@ -37,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
+        startService(intentBackgroundService);
+
         createNotificationChannel();
         setupUI();
     }
