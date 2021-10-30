@@ -36,20 +36,4 @@ public class PushNotificationService extends FirebaseMessagingService {
     public static String getToken(Context context) {
         return context.getSharedPreferences("_", MODE_PRIVATE).getString("fb", "empty");
     }
-
-//        @Override
-//    public void onMessageReceived(@NonNull RemoteMessage remoteMessage){
-//        String title = remoteMessage.getNotification().getTitle();
-//        String text = remoteMessage.getNotification().getBody();
-//        final String CHANNEL_ID = "HEAD_UP_NOTIFICATION";
-//        NotificationChannel channel = new NotificationChannel(
-//                CHANNEL_ID,
-//                "Heads up Notification",
-//                NotificationManager.IMPORTANCE_HIGH
-//        );
-//        getSystemService(NotificationManager.class).createNotificationChannel(channel);
-//        NotificationManager
-//        super.onMessageReceived(remoteMessage);
-//    }
-
 }

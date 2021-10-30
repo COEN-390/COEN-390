@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
                         // Get new FCM registration token
                         String token = task.getResult();
 
-                        Log.d(TAG, "fcm token : "+token);
+                        Log.d(TAG, "Firebase Cloud Messaging token: "+ token);
 
                     }
                 });
