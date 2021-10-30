@@ -3,6 +3,7 @@ package com.example.androidapp;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -66,6 +67,7 @@ public class SharedPreferencesHelper {
 
                         @Override
                         public void resumeWith(@NotNull Object o) {
+                            System.out.println("Creating Session");
                             try {
                                 if (o instanceof Result.Failure) {
                                     Result.Failure failure = (Result.Failure) o;
@@ -78,6 +80,7 @@ public class SharedPreferencesHelper {
                                 System.out.println(e.getMessage());
                                 System.out.println(e.getCode());
                                 System.out.println(e.getResponse());
+                                Toast.makeText(context, "Could not contact server :(", Toast.LENGTH_SHORT).show();
                             } catch (Throwable th) {
                                 Log.e("ERROR", "Unable to create session");
                             }
@@ -153,12 +156,14 @@ public class SharedPreferencesHelper {
                                     json = response.body().string();
                                     JSONObject user = new JSONObject(json);
                                     _user.postValue(user);
+                                    storeUser(user);
                                 }
                             } catch (AppwriteException e) {
                                 System.out.println("storeUsername() " + new Timestamp(System.currentTimeMillis()));
                                 System.out.println(e.getMessage());
                                 System.out.println(e.getCode());
                                 System.out.println(e.getResponse());
+                                Toast.makeText(context, "Invalid Credentials", Toast.LENGTH_SHORT).show();
                             } catch (Throwable th) {
                                 Log.e("ERROR", "Unable to get user");
                             }
@@ -173,7 +178,34 @@ public class SharedPreferencesHelper {
         }
     }
 
+    public void storeUser(JSONObject user){
+        String name = "";
+        String email = "";
+        try {
+            name = user.getString("name");
+            email = user.getString("email");
+        }catch(JSONException e){
+            System.out.println("EXCEPTION: " + e);
+        }
+        editor.putString("name",name);
+        editor.putString("email",email);
+        editor.apply();
+    }
+
+    public void clearUser(){
+        String name = "";
+        String email = "";
+        editor.putString("name",name);
+        editor.putString("email",email);
+        editor.apply();
+    }
+
+    public String getName(){
+        return sharedPreferences.getString("name", "");
+    }
+
     public LiveData<JSONObject> getUser(){
         return this.user;
     }
+
 }

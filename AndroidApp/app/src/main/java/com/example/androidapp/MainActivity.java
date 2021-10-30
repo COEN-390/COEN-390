@@ -43,9 +43,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.logout_menu_item:
-                sharedPreferencesHelper.endSession();
-                Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
-                goToLoginActivity();
+                logout();
         }
 
         return super.onOptionsItemSelected(item);
@@ -60,12 +58,9 @@ public class MainActivity extends AppCompatActivity {
         actionBar.setHomeButtonEnabled(false);
 
         sharedPreferencesHelper.getUser().observe(this, jsonObject ->{
-            if(sharedPreferencesHelper.getUser().getValue() != null){
-                try {
-                    welcomeMessage.setText("Welcome, " + sharedPreferencesHelper.getUser().getValue().getString("name") + "!");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+            System.out.println(sharedPreferencesHelper.getName());
+            if(sharedPreferencesHelper.getName() != ""){
+                welcomeMessage.setText("Welcome, " + sharedPreferencesHelper.getName() + "!");
             }
             else{
                 goToLoginActivity();
@@ -76,5 +71,12 @@ public class MainActivity extends AppCompatActivity {
     private void goToLoginActivity(){
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+    }
+
+    private void logout(){
+        sharedPreferencesHelper.endSession();
+        sharedPreferencesHelper.clearUser();
+        Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
+        goToLoginActivity();
     }
 }

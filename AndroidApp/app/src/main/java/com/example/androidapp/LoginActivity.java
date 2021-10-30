@@ -44,7 +44,6 @@ public class LoginActivity extends AppCompatActivity {
                 String password = passwordEditText.getText().toString();
 
                 sharedPreferencesHelper.createSession(email, password);
-
                 goToMainActivity();
             }
         });
