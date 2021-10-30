@@ -12,6 +12,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,9 +21,15 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import java.util.zip.Inflater;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity" ;
 
     private SharedPreferencesHelper sharedPreferencesHelper;
     private ActionBar actionBar;
@@ -36,12 +43,40 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Log.d(TAG, "onCreate Called!");
 
         Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
         startService(intentBackgroundService);
 
+//        String token = PushNotificationService.getToken(this);
+//        Log.d(TAG, "Token Received: " + token);
+        tokenCall();
+
         createNotificationChannel();
         setupUI();
+    }
+
+    /**
+     * Method used to obtain token for app
+     * Taken from: https://stackoverflow.com/a/66696714
+     */
+
+    private void tokenCall() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+                        // Get new FCM registration token
+                        String token = task.getResult();
+
+                        Log.d(TAG, "fcm token : "+token);
+
+                    }
+                });
     }
 
     @Override
@@ -56,7 +91,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Must do at the start before notifications can happen. Maybe put on main activity onCreate() ?
+    //Must do at the start before notifications can happen. Maybe put in main activity onCreate() ?
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
@@ -64,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             CharSequence name = "SampleSequence";
             String description = "SampleDescription";
 
-            //Sett the importance of the notification
+            //Set the importance of the notification
             int importance = NotificationManager.IMPORTANCE_HIGH;
 
             //Actually creating the channel
