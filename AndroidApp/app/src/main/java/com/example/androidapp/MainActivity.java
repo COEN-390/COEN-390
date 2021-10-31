@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
+import org.json.JSONException;
 
 import java.util.zip.Inflater;
 
@@ -123,10 +124,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.logout_menu_item:
-                sharedPreferencesHelper.setEmail("");
-                sharedPreferencesHelper.setPassword("");
-                Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
-                goToLoginActivity();
+                logout();
         }
 
         return super.onOptionsItemSelected(item);
@@ -170,10 +168,22 @@ public class MainActivity extends AppCompatActivity {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(420, builder.build()); //Different ID needed for separate cameras? or else can only have one notification for all cameras
 
+        if(!sharedPreferencesHelper.userIsEmpty()){
+            welcomeMessage.setText("Welcome, " + sharedPreferencesHelper.getName() + "!");
+        }
+        else{
+            goToLoginActivity();
+        }
     }
 
     private void goToLoginActivity(){
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
+    }
+
+    private void logout(){
+        sharedPreferencesHelper.endSession();
+        Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
+        goToLoginActivity();
     }
 }
