@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AndroidApp</string>
+    <string name="Shared_Preferences">SharedPreferences</string>
+    <string name="Shared_Preferences_User">User</string>
+</resources>
