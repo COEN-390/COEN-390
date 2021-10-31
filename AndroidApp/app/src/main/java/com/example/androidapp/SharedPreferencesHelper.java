@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Method;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -32,8 +33,6 @@ public class SharedPreferencesHelper {
     private SharedPreferences.Editor editor;
     private Client client;
     private Account account;
-    private MutableLiveData<JSONObject> _user;
-    private LiveData<JSONObject> user;
 
     public SharedPreferencesHelper(Context context){
         this.context = context;
@@ -45,11 +44,6 @@ public class SharedPreferencesHelper {
                 .setEndpoint("https://appwrite.orpine.net/v1")
                 .setProject("6137a2ef0d4f5");
         this.account = new Account(this.client);
-
-        // Initialize the user
-        this._user = new MutableLiveData<JSONObject>();
-        this._user.setValue(null);
-        this.user = this._user;
     }
 
     public void createSession(String email, String password) {
@@ -80,7 +74,6 @@ public class SharedPreferencesHelper {
                                 System.out.println(e.getMessage());
                                 System.out.println(e.getCode());
                                 System.out.println(e.getResponse());
-                                Toast.makeText(context, "Could not contact server :(", Toast.LENGTH_SHORT).show();
                             } catch (Throwable th) {
                                 Log.e("ERROR", "Unable to create session");
                             }
@@ -112,8 +105,9 @@ public class SharedPreferencesHelper {
                                 if (o instanceof Result.Failure) {
                                     Result.Failure failure = (Result.Failure) o;
                                     throw failure.exception;
-                                } else {
-                                    _user.postValue(null);
+                                } else{
+                                    editor.putString("user", "{}");
+                                    editor.apply();
                                 }
                             } catch (AppwriteException e){
                                 System.out.println("endSession() " + new Timestamp(System.currentTimeMillis()));
@@ -154,9 +148,8 @@ public class SharedPreferencesHelper {
                                 } else {
                                     Response response = (Response) o;
                                     json = response.body().string();
-                                    JSONObject user = new JSONObject(json);
-                                    _user.postValue(user);
-                                    storeUser(user);
+                                    editor.putString("user", json);
+                                    editor.apply();
                                 }
                             } catch (AppwriteException e) {
                                 System.out.println("storeUsername() " + new Timestamp(System.currentTimeMillis()));
@@ -178,34 +171,28 @@ public class SharedPreferencesHelper {
         }
     }
 
-    public void storeUser(JSONObject user){
-        String name = "";
-        String email = "";
-        try {
-            name = user.getString("name");
-            email = user.getString("email");
-        }catch(JSONException e){
-            System.out.println("EXCEPTION: " + e);
-        }
-        editor.putString("name",name);
-        editor.putString("email",email);
-        editor.apply();
-    }
-
-    public void clearUser(){
-        String name = "";
-        String email = "";
-        editor.putString("name",name);
-        editor.putString("email",email);
-        editor.apply();
-    }
-
     public String getName(){
-        return sharedPreferences.getString("name", "");
+        if(!userIsEmpty()){
+            try {
+                return getUser().getString("name");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
-    public LiveData<JSONObject> getUser(){
-        return this.user;
+    private JSONObject getUser(){
+        String json = sharedPreferences.getString("user", "{}");
+        try {
+            return new JSONObject(json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
+    public boolean userIsEmpty(){
+        return getUser().length() == 0 ;
+    }
 }

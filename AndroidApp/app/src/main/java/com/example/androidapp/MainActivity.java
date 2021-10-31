@@ -57,15 +57,12 @@ public class MainActivity extends AppCompatActivity {
         actionBar.show();
         actionBar.setHomeButtonEnabled(false);
 
-        sharedPreferencesHelper.getUser().observe(this, jsonObject ->{
-            System.out.println(sharedPreferencesHelper.getName());
-            if(sharedPreferencesHelper.getName() != ""){
-                welcomeMessage.setText("Welcome, " + sharedPreferencesHelper.getName() + "!");
-            }
-            else{
-                goToLoginActivity();
-            }
-        });
+        if(!sharedPreferencesHelper.userIsEmpty()){
+            welcomeMessage.setText("Welcome, " + sharedPreferencesHelper.getName() + "!");
+        }
+        else{
+            goToLoginActivity();
+        }
     }
 
     private void goToLoginActivity(){
@@ -75,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void logout(){
         sharedPreferencesHelper.endSession();
-        sharedPreferencesHelper.clearUser();
         Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
         goToLoginActivity();
     }
