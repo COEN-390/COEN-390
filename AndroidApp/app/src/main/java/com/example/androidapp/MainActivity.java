@@ -80,18 +80,6 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        if(sharedPreferencesHelper.getEmail().equals("")){
-            goToLoginActivity();
-        }
-        else{
-            welcomeMessage.setText("Welcome, " + sharedPreferencesHelper.getEmail() + "!");
-        }
-    }
-
     //Must do at the start before notifications can happen. Maybe put in main activity onCreate() ?
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -147,6 +135,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if(!sharedPreferencesHelper.userIsEmpty()){
+            welcomeMessage.setText("Welcome, " + sharedPreferencesHelper.getName() + "!");
+        }
+        else{
+            goToLoginActivity();
+        }
+
     }
 
     private void notification(){
@@ -168,12 +163,6 @@ public class MainActivity extends AppCompatActivity {
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
         notificationManager.notify(420, builder.build()); //Different ID needed for separate cameras? or else can only have one notification for all cameras
 
-        if(!sharedPreferencesHelper.userIsEmpty()){
-            welcomeMessage.setText("Welcome, " + sharedPreferencesHelper.getName() + "!");
-        }
-        else{
-            goToLoginActivity();
-        }
     }
 
     private void goToLoginActivity(){
