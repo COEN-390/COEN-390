@@ -1,0 +1,6 @@
+[submodule "ComputerVision/yolov5"]
+	path = ComputerVision/yolov5
+	url = https://github.com/COEN-390/yolov5.git
+[submodule "ComputerVision/yolov5-lite"]
+	path = ComputerVision/yolov5-lite
+	url = https://github.com/COEN-390/YOLOv5-Lite.git
