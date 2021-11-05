@@ -11,40 +11,53 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecyclerViewAdapter.ViewHolder> {
+public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecyclerViewAdapter.ViewHolder> {
 
     private SharedPreferencesHelper sharedPreferencesHelper;
-    private List<String> events;
+    private List<String> users;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView eventText;
+        private TextView nameText;
+        private TextView emailText;
+        private TextView passwordText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            eventText = itemView.findViewById(R.id.emailText);
+            nameText = itemView.findViewById(R.id.nameText);
+            emailText = itemView.findViewById(R.id.emailText);
+            passwordText = itemView.findViewById(R.id.passwordText);
         }
 
-        public TextView getItemText() {
-            return eventText;
+        public TextView getNameText() {
+            return nameText;
+        }
+        public TextView getEmailText() {
+            return emailText;
+        }
+        public TextView getPasswordText() {
+            return passwordText;
         }
     }
 
-    public EventsRecyclerViewAdapter(Context context, List<String> events) {
+    public UsersRecyclerViewAdapter(Context context, List<String> users) {
         this.sharedPreferencesHelper = new SharedPreferencesHelper(context);
-        this.events = events;
+        this.users = users;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.events_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.users_item, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.getItemText().setText("[Date] - [Time]");
+        holder.getNameText().setText("Name");
+        holder.getEmailText().setText("Email");
+        holder.getPasswordText().setText("Password");
 
+        // TODO: add a DF on item click that prompts for user deletion or elements change
         // Set onClickListener for every item to the same activity
 //        holder.itemView.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -55,12 +68,12 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
 //                intent.putExtra("studentId", sortedProfiles.get(pos).getStudentId());
 //                view.getContext().startActivity(intent);
 //            }
-//        }); // MIGHT NEED THIS
+//        });
     }
 
     @Override
     public int getItemCount() {
-        if(events.equals("")) return 0;
-        else return events.size();
+        if(users.equals("")) return 0;
+        else return users.size();
     }
 }

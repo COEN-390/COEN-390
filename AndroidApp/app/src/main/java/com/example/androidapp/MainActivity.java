@@ -189,7 +189,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupRecyclerView(){
         eventsRecyclerView = findViewById(R.id.eventsRecyclerView);
-        // DEMO ITEMS
+        /* TODO: switch demo events list for actual events list
+        And maybe switch the "notify me" button for a "clear DB" button
+         */
         List<String> events = new ArrayList<String>();
         for(int i = 1; i <= 20; i++){
             events.add("Test " + i);

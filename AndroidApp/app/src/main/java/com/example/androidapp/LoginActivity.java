@@ -48,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 try {
                     sharedPreferencesHelper.createSession(email, password);
+                    // TODO: add a loading icon while waiting
                     // Only login after a certain delay (gives time to hear back from server)
                     (new Handler()).postDelayed(new Runnable() {
                         @Override
@@ -66,6 +67,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void goToMainActivity(){
+        // TODO: make loading icon disappear
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
