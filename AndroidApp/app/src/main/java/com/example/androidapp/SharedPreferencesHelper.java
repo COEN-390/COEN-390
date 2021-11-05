@@ -46,46 +46,39 @@ public class SharedPreferencesHelper {
         this.account = new Account(this.client);
     }
 
-    public void createSession(String email, String password) {
+    public void createSession(String email, String password) throws AppwriteException {
         // Create the session
-        try {
-            account.createSession(
-                    email,
-                    password,
-                    new Continuation<Object>() {
-                        @NotNull
-                        @Override
-                        public CoroutineContext getContext() {
-                            return EmptyCoroutineContext.INSTANCE;
-                        }
+        account.createSession(
+                email,
+                password,
+                new Continuation<Object>() {
+                    @NotNull
+                    @Override
+                    public CoroutineContext getContext() {
+                        return EmptyCoroutineContext.INSTANCE;
+                    }
 
-                        @Override
-                        public void resumeWith(@NotNull Object o) {
-                            System.out.println("Creating Session");
-                            try {
-                                if (o instanceof Result.Failure) {
-                                    Result.Failure failure = (Result.Failure) o;
-                                    throw failure.exception;
-                                } else {
-                                    getAccount();
-                                }
-                            } catch (AppwriteException e){
-                                System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
-                                System.out.println(e.getMessage());
-                                System.out.println(e.getCode());
-                                System.out.println(e.getResponse());
-                            } catch (Throwable th) {
-                                Log.e("ERROR", "Unable to create session");
+                    @Override
+                    public void resumeWith(@NotNull Object o) {
+                        System.out.println("Creating Session");
+                        try {
+                            if (o instanceof Result.Failure) {
+                                Result.Failure failure = (Result.Failure) o;
+                                throw failure.exception;
+                            } else {
+                                getAccount();
                             }
+                        } catch (AppwriteException e){
+                            System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
+                            System.out.println(e.getMessage());
+                            System.out.println(e.getCode());
+                            System.out.println(e.getResponse());
+                        } catch (Throwable th) {
+                            Log.e("ERROR", "Unable to create session");
                         }
                     }
-            );
-        } catch (AppwriteException e) {
-            System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
-            System.out.println(e.getMessage());
-            System.out.println(e.getCode());
-            System.out.println(e.getResponse());
-         }
+                }
+        );
     }
 
     public void endSession(){

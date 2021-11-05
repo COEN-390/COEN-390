@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.sql.Timestamp;
+
 import io.appwrite.exceptions.AppwriteException;
 
 public class LoginActivity extends AppCompatActivity {
@@ -44,13 +46,21 @@ public class LoginActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
 
-                sharedPreferencesHelper.createSession(email, password);
-                (new Handler()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        goToMainActivity();
-                    }
-                }, 2000);
+                try {
+                    sharedPreferencesHelper.createSession(email, password);
+                    // Only login after a certain delay (gives time to hear back from server)
+                    (new Handler()).postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            goToMainActivity();
+                        }
+                    }, 5000);
+                } catch (AppwriteException e) {
+                    System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
+                    System.out.println(e.getMessage());
+                    System.out.println(e.getCode());
+                    System.out.println(e.getResponse());
+                }
             }
         });
     }
