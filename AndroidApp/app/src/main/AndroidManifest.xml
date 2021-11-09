@@ -10,22 +10,32 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidApp">
         <activity
+            android:name=".AdminActivity"
+            android:exported="true"
+            android:label="User Management">
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value="com.example.androidapp.MainActivity"/>
+        </activity>
+        <activity
             android:name=".LoginActivity"
             android:exported="true" />
         <activity
             android:name="io.appwrite.views.CallbackActivity"
-            android:exported="true" >
+            android:exported="true">
             <intent-filter android:label="android_web_auth">
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="appwrite-callback-6137a2ef0d4f5" />
             </intent-filter>
         </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:title="Alerts" >
+            android:label="Alerts">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -33,11 +43,12 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".PushNotificationService"
-                 android:exported="false"
-                 android:stopWithTask="false">
+        <service
+            android:name=".PushNotificationService"
+            android:exported="false"
+            android:stopWithTask="false">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"></action>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
     </application>
