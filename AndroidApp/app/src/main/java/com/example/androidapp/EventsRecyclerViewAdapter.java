@@ -9,19 +9,26 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.security.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecyclerViewAdapter.ViewHolder> {
 
     private SharedPreferencesHelper sharedPreferencesHelper;
-    private List<String> events;
+    private JSONArray events;
+    private int size;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView eventText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            eventText = itemView.findViewById(R.id.emailText);
+            eventText = itemView.findViewById(R.id.eventText);
         }
 
         public TextView getItemText() {
@@ -29,9 +36,14 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
         }
     }
 
-    public EventsRecyclerViewAdapter(Context context, List<String> events) {
+    public EventsRecyclerViewAdapter(Context context, JSONObject events) {
         this.sharedPreferencesHelper = new SharedPreferencesHelper(context);
-        this.events = events;
+        try {
+            this.events = events.getJSONArray("documents");
+            this.size = events.getInt("sum");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @NonNull
@@ -43,7 +55,20 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.getItemText().setText("[Date] - [Time]");
+        JSONObject event = new JSONObject();
+        Date date = new Date();
+        try {
+            event = events.getJSONObject(position);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        try {
+            date = new Date((long) event.getDouble("timestamp"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        holder.getItemText().setText(date.toString());
 
         // Set onClickListener for every item to the same activity
 //        holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +85,6 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
 
     @Override
     public int getItemCount() {
-        if(events.equals("")) return 0;
-        else return events.size();
+        return this.size;
     }
 }

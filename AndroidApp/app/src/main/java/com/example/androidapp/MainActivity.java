@@ -1,5 +1,6 @@
 package com.example.androidapp;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,10 +29,15 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.Inflater;
+
+import io.appwrite.models.RealtimeCallback;
+import io.appwrite.models.RealtimeResponseEvent;
+import io.appwrite.services.Realtime;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
     private Button testButton;
     private RecyclerView eventsRecyclerView;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
+    private Realtime eventsListener;
     //Notification channel ID. Put it somewhere better
     private String defaultChannel = "defaultChannel";
 
@@ -62,6 +69,18 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannel();
         setupUI();
         setupRecyclerView();
+
+        eventsListener = new Realtime(sharedPreferencesHelper.getClient());
+        eventsListener.subscribe(new String[] {"collections.61871d8957bbc.documents"}, (param) -> {
+            // TODO: find a way to make the recycler view update
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    eventsRecyclerViewAdapter.notifyDataSetChanged();
+                }
+            });
+            return null;
+        });
     }
 
     /**
@@ -189,13 +208,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupRecyclerView(){
         eventsRecyclerView = findViewById(R.id.eventsRecyclerView);
-        /* TODO: switch demo events list for actual events list
-        And maybe switch the "notify me" button for a "clear DB" button
-         */
-        List<String> events = new ArrayList<String>();
-        for(int i = 1; i <= 20; i++){
-            events.add("Test " + i);
-        }
+        JSONObject events = sharedPreferencesHelper.getEvents();
 
         // Create layout manager, adapter and dividers between items of the view holder
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
