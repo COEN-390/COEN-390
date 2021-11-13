@@ -21,8 +21,6 @@ namespace FCMPushNotifications
                 Credential = GoogleCredential.GetApplicationDefault(),
             }));
 
-            //Authorization: key="AAAA052hQHY:APA91bGyWmgzuCsGyO3eC5mex9mOmrgTEtUG5Dk5ffupNCN_KfLVGJk3hlUp4Oi7mECmyVp3KDImMhI3MtKVziLoh6Gb1zs21Vwp8Bv2Wbe2ZJ858fO1js16yeZ0VtQG_8v4Vvv8CvwV"
-
             // Sends the notification
             string response = await messaging.SendAsync(new Message()
             {
@@ -39,7 +37,6 @@ namespace FCMPushNotifications
                 },
                 
                 Topic = "/topics/UsersA"
-
             });
             
             Console.WriteLine("Successfully sent message: " + response);
