@@ -1,6 +1,7 @@
 package com.example.androidapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ public class AuthenticationController {
     private Client client;
     private Account account;
     private Database db;
+    private SharedPreferencesHelper sharedPreferencesHelper;
 
     public AuthenticationController(Context context) {
         this.context = context;
@@ -34,6 +36,7 @@ public class AuthenticationController {
 
         this.account = new Account(this.client);
         this.db = new Database(this.client);
+        sharedPreferencesHelper = new SharedPreferencesHelper(context);
     }
 
     public void createSession(String email, String password) throws AppwriteException {
@@ -57,6 +60,9 @@ public class AuthenticationController {
                                 throw failure.exception;
                             } else {
                                 getAccount();
+                                Intent intent = new Intent(context, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                context.startActivity(intent);
                             }
                         } catch (AppwriteException e){
                             System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
@@ -64,6 +70,8 @@ public class AuthenticationController {
                             System.out.println(e.getCode());
                             System.out.println(e.getResponse());
                         } catch (Throwable th) {
+                            System.out.println("test");
+                            System.out.println(th.getMessage());
                             Log.e("ERROR", "Unable to create session");
                         }
                     }
@@ -89,7 +97,9 @@ public class AuthenticationController {
                                     Result.Failure failure = (Result.Failure) o;
                                     throw failure.exception;
                                 } else{
-                                    // Success
+                                    Intent intent = new Intent(context, LoginActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    context.startActivity(intent);
                                 }
                             } catch (AppwriteException e){
                                 System.out.println("endSession() " + new Timestamp(System.currentTimeMillis()));
@@ -130,6 +140,7 @@ public class AuthenticationController {
                                 } else {
                                     Response response = (Response) o;
                                     json = response.body().string();
+                                    sharedPreferencesHelper.setUser(json);
                                 }
                             } catch (AppwriteException e) {
                                 System.out.println("storeUsername() " + new Timestamp(System.currentTimeMillis()));

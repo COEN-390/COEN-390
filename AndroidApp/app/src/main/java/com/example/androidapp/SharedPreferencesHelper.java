@@ -55,8 +55,6 @@ public class SharedPreferencesHelper {
 
     }
 
-
-
     public String getName(){
         if(!userIsEmpty()){
             try {
@@ -80,6 +78,11 @@ public class SharedPreferencesHelper {
 
     public boolean userIsEmpty(){
         return getUser().length() == 0 ;
+    }
+
+    public void setUser(String json) {
+        editor.putString("user", json);
+        editor.apply();
     }
 
     private void getEventsList(){

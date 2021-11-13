@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity" ;
 
     private SharedPreferencesHelper sharedPreferencesHelper;
+    private AuthenticationController authenticationController;
     private ActionBar actionBar;
     private MenuInflater menuInflater;
     private Button testButton;
@@ -151,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupUI(){
         actionBar = getSupportActionBar();
         sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
+        authenticationController = new AuthenticationController(getApplicationContext());
 
         actionBar.show();
         actionBar.setHomeButtonEnabled(false);
@@ -201,9 +203,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logout(){
-        sharedPreferencesHelper.endSession();
+        authenticationController.endSession();
         Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
-        goToLoginActivity();
     }
 
     private void setupRecyclerView(){
