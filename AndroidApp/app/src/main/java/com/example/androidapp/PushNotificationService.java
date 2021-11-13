@@ -6,7 +6,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.android.gms.common.api.Response;
-import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.*;
 
 import androidx.annotation.NonNull;
@@ -17,9 +17,13 @@ import com.google.firebase.messaging.RemoteMessage;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.Timestamp;
+
 import io.appwrite.Client;
+import io.appwrite.exceptions.AppwriteException;
 import io.appwrite.services.Functions;
 import kotlin.Result;
+import kotlin.coroutines.Continuation;
 import kotlin.coroutines.CoroutineContext;
 import kotlin.coroutines.EmptyCoroutineContext;
 
@@ -44,32 +48,41 @@ public class PushNotificationService extends FirebaseMessagingService {
 
         Functions functions = new Functions(client);
 
-        functions.createExecution(
-                "61901e7628bd2",
-                new Continuation<Object>() {
-                    @NotNull
-                    @Override
-                    public CoroutineContext getContext() {
-                        return EmptyCoroutineContext.INSTANCE;
-                    }
+        try {
+            functions.createExecution(
+                    "61901e7628bd2",
+                    "",
+                    new Continuation<Object>() {
+                        @NotNull
+                        @Override
+                        public CoroutineContext getContext() {
+                            return EmptyCoroutineContext.INSTANCE;
+                        }
 
-                    @Override
-                    public void resumeWith(@NotNull Object o) {
-                        String json = "";
-                        try {
-                            if (o instanceof Result.Failure) {
-                                Result.Failure failure = (Result.Failure) o;
-                                throw failure.exception;
-                            } else {
-                                Response response = (Response) o;
-                                json = response.toString();
+                        @Override
+                        public void resumeWith(@NotNull Object o) {
+                            System.out.println("Creating Session");
+                            try {
+                                if (o instanceof Result.Failure) {
+                                    Result.Failure failure = (Result.Failure) o;
+                                    throw failure.exception;
+                                } else {
+                                }
+                            } catch (AppwriteException e){
+                                System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
+                                System.out.println(e.getMessage());
+                                System.out.println(e.getCode());
+                                System.out.println(e.getResponse());
+                            } catch (Throwable th) {
+                                Log.e("ERROR", "Unable to create session");
                             }
-                        } catch (Throwable th) {
-                            Log.e("ERROR", th.toString());
                         }
                     }
-                }
-        );
+
+            );
+        } catch (AppwriteException e) {
+            e.printStackTrace();
+        }
 
 
     }
