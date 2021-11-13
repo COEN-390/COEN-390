@@ -84,7 +84,6 @@ public class PushNotificationService extends FirebaseMessagingService {
             e.printStackTrace();
         }
 
-
     }
 
     @Override
