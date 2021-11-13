@@ -1,5 +1,6 @@
 package com.example.androidapp;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,21 +29,28 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.Inflater;
+
+import io.appwrite.models.RealtimeCallback;
+import io.appwrite.models.RealtimeResponseEvent;
+import io.appwrite.services.Realtime;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity" ;
 
     private SharedPreferencesHelper sharedPreferencesHelper;
+    private AuthenticationController authenticationController;
     private ActionBar actionBar;
     private MenuInflater menuInflater;
     private Button testButton;
     private RecyclerView eventsRecyclerView;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
+    private Realtime eventsListener;
     //Notification channel ID. Put it somewhere better
     private String defaultChannel = "defaultChannel";
 
@@ -50,41 +58,30 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "onCreate Called!");
-
-        Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
-        startService(intentBackgroundService);
-
+        sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
+        authenticationController = new AuthenticationController(getApplicationContext());
+//        if(!sharedPreferencesHelper.userIsEmpty()) {
+//            Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
+//            startService(intentBackgroundService);
+//        }
 //        String token = PushNotificationService.getToken(this);
 //        Log.d(TAG, "Token Received: " + token);
-        tokenCall();
 
         createNotificationChannel();
         setupUI();
         setupRecyclerView();
-    }
 
-    /**
-     * Method used to obtain token for app
-     * Taken from: https://stackoverflow.com/a/66696714
-     */
-
-    private void tokenCall() {
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                            return;
-                        }
-                        // Get new FCM registration token
-                        String token = task.getResult();
-
-                        Log.d(TAG, "Firebase Cloud Messaging token: "+ token);
-
-                    }
-                });
+        eventsListener = new Realtime(sharedPreferencesHelper.getClient());
+        eventsListener.subscribe(new String[] {"collections.61871d8957bbc.documents"}, (param) -> {
+            // TODO: find a way to make the recycler view update
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    eventsRecyclerViewAdapter.notifyDataSetChanged();
+                }
+            });
+            return null;
+        });
     }
 
     //Must do at the start before notifications can happen. Maybe put in main activity onCreate() ?
@@ -131,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupUI(){
         actionBar = getSupportActionBar();
-        sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
+
 
         actionBar.show();
         actionBar.setHomeButtonEnabled(false);
@@ -182,20 +179,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void logout(){
-        sharedPreferencesHelper.endSession();
+        authenticationController.endSession();
         Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
-        goToLoginActivity();
     }
 
     private void setupRecyclerView(){
         eventsRecyclerView = findViewById(R.id.eventsRecyclerView);
-        /* TODO: switch demo events list for actual events list
-        And maybe switch the "notify me" button for a "clear DB" button
-         */
-        List<String> events = new ArrayList<String>();
-        for(int i = 1; i <= 20; i++){
-            events.add("Test " + i);
-        }
+        JSONObject events = sharedPreferencesHelper.getEvents();
 
         // Create layout manager, adapter and dividers between items of the view holder
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);

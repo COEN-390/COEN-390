@@ -20,6 +20,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordEditText;
     private Button loginButton;
     private SharedPreferencesHelper sharedPreferencesHelper;
+    private AuthenticationController authenticationController;
     private ActionBar actionBar;
 
     @Override
@@ -36,39 +37,23 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_button);
 
         sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
+        authenticationController = new AuthenticationController(getApplicationContext());
 
         actionBar = getSupportActionBar();
         actionBar.hide();
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email = emailEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-
-                try {
-                    sharedPreferencesHelper.createSession(email, password);
-                    // TODO: add a loading icon while waiting
-                    // Only login after a certain delay (gives time to hear back from server)
-                    (new Handler()).postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            goToMainActivity();
-                        }
-                    }, 5000);
-                } catch (AppwriteException e) {
-                    System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
-                    System.out.println(e.getMessage());
-                    System.out.println(e.getCode());
-                    System.out.println(e.getResponse());
-                }
+        loginButton.setOnClickListener(view -> {
+            String email = emailEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            try {
+                authenticationController.createSession(email, password);
+            } catch (AppwriteException e) {
+                System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
+                System.out.println(e.getMessage());
+                System.out.println(e.getCode());
+                System.out.println(e.getResponse());
             }
         });
     }
 
-    private void goToMainActivity(){
-        // TODO: make loading icon disappear
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
 }
