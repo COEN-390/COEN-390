@@ -51,7 +51,7 @@ public class PushNotificationService extends FirebaseMessagingService {
         try {
             functions.createExecution(
                     "61901e7628bd2",
-                    "",
+                    appToken,
                     new Continuation<Object>() {
                         @NotNull
                         @Override
