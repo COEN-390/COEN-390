@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.sql.Timestamp;
+
 import io.appwrite.exceptions.AppwriteException;
 
 public class LoginActivity extends AppCompatActivity {
@@ -18,6 +20,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText passwordEditText;
     private Button loginButton;
     private SharedPreferencesHelper sharedPreferencesHelper;
+    private AuthenticationController authenticationController;
     private ActionBar actionBar;
 
     @Override
@@ -34,29 +37,23 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_button);
 
         sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
+        authenticationController = new AuthenticationController(getApplicationContext());
 
         actionBar = getSupportActionBar();
         actionBar.hide();
 
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email = emailEditText.getText().toString();
-                String password = passwordEditText.getText().toString();
-
-                sharedPreferencesHelper.createSession(email, password);
-                (new Handler()).postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        goToMainActivity();
-                    }
-                }, 2000);
+        loginButton.setOnClickListener(view -> {
+            String email = emailEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+            try {
+                authenticationController.createSession(email, password);
+            } catch (AppwriteException e) {
+                System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
+                System.out.println(e.getMessage());
+                System.out.println(e.getCode());
+                System.out.println(e.getResponse());
             }
         });
     }
 
-    private void goToMainActivity(){
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-    }
 }

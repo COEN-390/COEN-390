@@ -1,10 +1,14 @@
 package com.example.androidapp;
 
+import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -25,18 +29,28 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.Inflater;
+
+import io.appwrite.models.RealtimeCallback;
+import io.appwrite.models.RealtimeResponseEvent;
+import io.appwrite.services.Realtime;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity" ;
 
     private SharedPreferencesHelper sharedPreferencesHelper;
+    private AuthenticationController authenticationController;
     private ActionBar actionBar;
     private MenuInflater menuInflater;
-    private TextView welcomeMessage;
     private Button testButton;
+    private RecyclerView eventsRecyclerView;
+    private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
+    private Realtime eventsListener;
     //Notification channel ID. Put it somewhere better
     private String defaultChannel = "defaultChannel";
 
@@ -55,6 +69,19 @@ public class MainActivity extends AppCompatActivity {
 
         createNotificationChannel();
         setupUI();
+        setupRecyclerView();
+
+        eventsListener = new Realtime(sharedPreferencesHelper.getClient());
+        eventsListener.subscribe(new String[] {"collections.61871d8957bbc.documents"}, (param) -> {
+            // TODO: find a way to make the recycler view update
+            MainActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    eventsRecyclerViewAdapter.notifyDataSetChanged();
+                }
+            });
+            return null;
+        });
     }
 
     /**
@@ -113,15 +140,19 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()){
             case R.id.logout_menu_item:
                 logout();
+                break;
+            case R.id.admin_menu_item:
+                goToAdminActivity();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     private void setupUI(){
-        welcomeMessage = findViewById(R.id.welcome_message);
         actionBar = getSupportActionBar();
         sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
+        authenticationController = new AuthenticationController(getApplicationContext());
 
         actionBar.show();
         actionBar.setHomeButtonEnabled(false);
@@ -135,12 +166,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(!sharedPreferencesHelper.userIsEmpty()){
-            welcomeMessage.setText("Welcome, " + sharedPreferencesHelper.getName() + "!");
-        }
-        else{
-            goToLoginActivity();
-        }
+        if(sharedPreferencesHelper.userIsEmpty()) goToLoginActivity();
+
 
     }
 
@@ -170,9 +197,27 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void goToAdminActivity(){
+        Intent intent = new Intent(this, AdminActivity.class);
+        startActivity(intent);
+    }
+
     private void logout(){
-        sharedPreferencesHelper.endSession();
+        authenticationController.endSession();
         Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
-        goToLoginActivity();
+    }
+
+    private void setupRecyclerView(){
+        eventsRecyclerView = findViewById(R.id.eventsRecyclerView);
+        JSONObject events = sharedPreferencesHelper.getEvents();
+
+        // Create layout manager, adapter and dividers between items of the view holder
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(getApplicationContext(), events);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(eventsRecyclerView.getContext(), linearLayoutManager.getOrientation());
+
+        eventsRecyclerView.setLayoutManager(linearLayoutManager);
+        eventsRecyclerView.addItemDecoration(dividerItemDecoration);
+        eventsRecyclerView.setAdapter(eventsRecyclerViewAdapter);
     }
 }
