@@ -46,43 +46,7 @@ public class PushNotificationService extends FirebaseMessagingService {
                 .setEndpoint("https://appwrite.orpine.net/v1") // Your API Endpoint
                 .setProject("6137a2ef0d4f5"); // Your project ID
 
-        Functions functions = new Functions(client);
 
-        try {
-            functions.createExecution(
-                    "61901e7628bd2",
-                    appToken,
-                    new Continuation<Object>() {
-                        @NotNull
-                        @Override
-                        public CoroutineContext getContext() {
-                            return EmptyCoroutineContext.INSTANCE;
-                        }
-
-                        @Override
-                        public void resumeWith(@NotNull Object o) {
-                            System.out.println("Creating Session");
-                            try {
-                                if (o instanceof Result.Failure) {
-                                    Result.Failure failure = (Result.Failure) o;
-                                    throw failure.exception;
-                                } else {
-                                }
-                            } catch (AppwriteException e){
-                                System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
-                                System.out.println(e.getMessage());
-                                System.out.println(e.getCode());
-                                System.out.println(e.getResponse());
-                            } catch (Throwable th) {
-                                Log.e("ERROR", "Unable to create session");
-                            }
-                        }
-                    }
-
-            );
-        } catch (AppwriteException e) {
-            e.printStackTrace();
-        }
 
 
     }

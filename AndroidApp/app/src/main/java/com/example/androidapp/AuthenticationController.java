@@ -5,6 +5,12 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.Timestamp;
@@ -13,6 +19,7 @@ import io.appwrite.Client;
 import io.appwrite.exceptions.AppwriteException;
 import io.appwrite.services.Account;
 import io.appwrite.services.Database;
+import io.appwrite.services.Functions;
 import kotlin.Result;
 import kotlin.coroutines.Continuation;
 import kotlin.coroutines.CoroutineContext;
@@ -25,6 +32,8 @@ public class AuthenticationController {
     private Account account;
     private Database db;
     private SharedPreferencesHelper sharedPreferencesHelper;
+    private static final String TAG = "AuthenticationController" ;
+
 
     public AuthenticationController(Context context) {
         this.context = context;
@@ -60,6 +69,7 @@ public class AuthenticationController {
                                 throw failure.exception;
                             } else {
                                 getAccount();
+                                subscribeToken();
                                 Intent intent = new Intent(context, MainActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                                 context.startActivity(intent);
@@ -159,6 +169,69 @@ public class AuthenticationController {
             System.out.println(e.getMessage());
             System.out.println(e.getCode());
             System.out.println(e.getResponse());
+        }
+    }
+
+    /**
+     * Method used to obtain token for app
+     * Taken from: https://stackoverflow.com/a/66696714
+     */
+
+    private void tokenCall() {
+        FirebaseMessaging.getInstance().getToken()
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            return;
+                        }
+                        // Get new FCM registration token
+                        String token = task.getResult();
+
+                        Log.d(TAG, "Firebase Cloud Messaging token: "+ token);
+
+                    }
+                });
+    }
+
+    private void subscribeToken() {
+        Functions functions = new Functions(client);
+
+        try {
+            functions.createExecution(
+                    "61901e7628bd2",
+                    PushNotificationService.getToken(context),
+                    new Continuation<Object>() {
+                        @NotNull
+                        @Override
+                        public CoroutineContext getContext() {
+                            return EmptyCoroutineContext.INSTANCE;
+                        }
+
+                        @Override
+                        public void resumeWith(@NotNull Object o) {
+                            System.out.println("Creating Session");
+                            try {
+                                if (o instanceof Result.Failure) {
+                                    Result.Failure failure = (Result.Failure) o;
+                                    throw failure.exception;
+                                } else {
+                                }
+                            } catch (AppwriteException e){
+                                System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
+                                System.out.println(e.getMessage());
+                                System.out.println(e.getCode());
+                                System.out.println(e.getResponse());
+                            } catch (Throwable th) {
+                                Log.e("ERROR", "Unable to create session");
+                            }
+                        }
+                    }
+
+            );
+        } catch (AppwriteException e) {
+            e.printStackTrace();
         }
     }
 }

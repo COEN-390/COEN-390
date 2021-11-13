@@ -58,14 +58,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(TAG, "onCreate Called!");
-
-        Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
-        startService(intentBackgroundService);
-
+        sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
+        authenticationController = new AuthenticationController(getApplicationContext());
+//        if(!sharedPreferencesHelper.userIsEmpty()) {
+//            Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
+//            startService(intentBackgroundService);
+//        }
 //        String token = PushNotificationService.getToken(this);
 //        Log.d(TAG, "Token Received: " + token);
-        tokenCall();
 
         createNotificationChannel();
         setupUI();
@@ -82,29 +82,6 @@ public class MainActivity extends AppCompatActivity {
             });
             return null;
         });
-    }
-
-    /**
-     * Method used to obtain token for app
-     * Taken from: https://stackoverflow.com/a/66696714
-     */
-
-    private void tokenCall() {
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                            return;
-                        }
-                        // Get new FCM registration token
-                        String token = task.getResult();
-
-                        Log.d(TAG, "Firebase Cloud Messaging token: "+ token);
-
-                    }
-                });
     }
 
     //Must do at the start before notifications can happen. Maybe put in main activity onCreate() ?
@@ -151,8 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupUI(){
         actionBar = getSupportActionBar();
-        sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
-        authenticationController = new AuthenticationController(getApplicationContext());
+
 
         actionBar.show();
         actionBar.setHomeButtonEnabled(false);
