@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
         Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
         startService(intentBackgroundService);
 
-        tokenCall();
         sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
         authenticationController = new AuthenticationController(getApplicationContext());
         // if(!sharedPreferencesHelper.userIsEmpty()) {
