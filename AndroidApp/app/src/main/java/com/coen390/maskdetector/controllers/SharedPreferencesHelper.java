@@ -141,6 +141,7 @@ public class SharedPreferencesHelper {
     }
 
     public void setEvents(JSONArray events){
+        // Take the current set of events and modify it accordingly
         String json = sharedPreferences.getString("events", "{\"sum\":0,\"documents\":[]}");
         try {
             JSONObject eventsList = new JSONObject(json);

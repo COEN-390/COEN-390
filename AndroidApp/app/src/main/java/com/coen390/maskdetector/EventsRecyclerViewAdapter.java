@@ -77,6 +77,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
         return this.size;
     }
 
+    // Used to refresh the data stored so that the notification of changed data set takes the new data
     public void updateList(){
         events = sharedPreferencesHelper.getEvents();
         size = sharedPreferencesHelper.getEventsSize();

@@ -223,22 +223,24 @@ public class MainActivity extends AppCompatActivity {
                 // If an event gets created, add it to the saved list of events
                 JSONArray events = sharedPreferencesHelper.getEvents();
                 if (eventType.equals("database.documents.create")) {
+                    JSONObject event = new JSONObject();
+                    // Payload is not in the same order, so create a proper new JSON object
+                    try {
+                        event.put("$id", payload.getString("$id"));
+                        event.put("$collection", payload.getString("$collection"));
+                        event.put("$permissions", payload.getString("$permissions"));
+                        event.put("timestamp", payload.getString("timestamp"));
+                        event.put("organizationId", payload.getString("organizationId"));
+                        event.put("$deviceId", payload.getString("deviceId"));
+                        // Add the new event to the array
+                        events.put(event);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                     MainActivity.this.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            JSONObject event = new JSONObject();
-                            // Payload is not in the same order, so create a proper new JSON object
-                            try {
-                                event.put("$id", payload.getString("$id"));
-                                event.put("$collection", payload.getString("$collection"));
-                                event.put("$permissions", payload.getString("$permissions"));
-                                event.put("timestamp", payload.getString("timestamp"));
-                                event.put("organizationId", payload.getString("organizationId"));
-                                event.put("$deviceId", payload.getString("deviceId"));
-                                events.put(event);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
+                            // Refresh the saved data and the recycler view
                             sharedPreferencesHelper.setEvents(events);
                             eventsRecyclerViewAdapter.updateList();
                             eventsRecyclerViewAdapter.notifyDataSetChanged();
@@ -252,18 +254,41 @@ public class MainActivity extends AppCompatActivity {
                         if(payload.getString("$id").equals(events.getJSONObject(i).getString("$id"))) {
                             // If the event got deleted, remove it from the saved list
                             if (eventType.equals("database.documents.delete")) {
+                                events.remove(i);
                                 MainActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        // Refresh the saved data and the recycler view
+                                        sharedPreferencesHelper.setEvents(events);
+                                        eventsRecyclerViewAdapter.updateList();
+                                        eventsRecyclerViewAdapter.notifyDataSetChanged();
                                         Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_SHORT).show();
                                     }
                                 });
                             }
                             // If it got updated, modify it
                             else {
+                                JSONObject event = new JSONObject();
+                                // Payload is not in the same order, so create a proper new JSON object
+                                try {
+                                    event.put("$id", payload.getString("$id"));
+                                    event.put("$collection", payload.getString("$collection"));
+                                    event.put("$permissions", payload.getString("$permissions"));
+                                    event.put("timestamp", payload.getString("timestamp"));
+                                    event.put("organizationId", payload.getString("organizationId"));
+                                    event.put("$deviceId", payload.getString("deviceId"));
+                                    // Modify the event in the array
+                                    events.put(i, event);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                                 MainActivity.this.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        // Refresh the saved data and the recycler view
+                                        sharedPreferencesHelper.setEvents(events);
+                                        eventsRecyclerViewAdapter.updateList();
+                                        eventsRecyclerViewAdapter.notifyDataSetChanged();
                                         Toast.makeText(getApplicationContext(), "Event updated", Toast.LENGTH_SHORT).show();
                                     }
                                 });
