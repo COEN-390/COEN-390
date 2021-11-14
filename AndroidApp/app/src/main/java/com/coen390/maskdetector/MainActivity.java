@@ -40,7 +40,7 @@ import io.appwrite.services.Realtime;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity" ;
+    private static final String TAG = "MainActivity";
 
     private SharedPreferencesHelper sharedPreferencesHelper;
     private AuthenticationController authenticationController;
@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView eventsRecyclerView;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
     private Realtime eventsListener;
-    //Notification channel ID. Put it somewhere better
+    // Notification channel ID. Put it somewhere better
     private String defaultChannel = "defaultChannel";
 
     @Override
@@ -63,6 +63,15 @@ public class MainActivity extends AppCompatActivity {
         startService(intentBackgroundService);
 
         tokenCall();
+        sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
+        authenticationController = new AuthenticationController(getApplicationContext());
+        // if(!sharedPreferencesHelper.userIsEmpty()) {
+        // Intent intentBackgroundService = new Intent(this,
+        // PushNotificationService.class);
+        // startService(intentBackgroundService);
+        // }
+        // String token = PushNotificationService.getToken(this);
+        // Log.d(TAG, "Token Received: " + token);
 
         createNotificationChannel();
         setupUI();
@@ -70,48 +79,25 @@ public class MainActivity extends AppCompatActivity {
         setupRealtime();
     }
 
-    /**
-     * Method used to obtain token for app
-     * Taken from: https://stackoverflow.com/a/66696714
-     */
-
-    private void tokenCall() {
-        FirebaseMessaging.getInstance().getToken()
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> task) {
-                        if (!task.isSuccessful()) {
-                            Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                            return;
-                        }
-                        // Get new FCM registration token
-                        String token = task.getResult();
-
-                        Log.d(TAG, "Firebase Cloud Messaging token: "+ token);
-
-                    }
-                });
-    }
-
-    //Must do at the start before notifications can happen. Maybe put in main activity onCreate() ?
+    // Must do at the start before notifications can happen. Maybe put in main
+    // activity onCreate() ?
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
-            //These appear in app settings. Put in notification resource class instead?
+            // These appear in app settings. Put in notification resource class instead?
             CharSequence name = "SampleSequence";
             String description = "SampleDescription";
 
-            //Set the importance of the notification
+            // Set the importance of the notification
             int importance = NotificationManager.IMPORTANCE_HIGH;
 
-            //Actually creating the channel
+            // Actually creating the channel
             NotificationChannel channel = new NotificationChannel(defaultChannel, name, importance);
             channel.setDescription(description);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -123,22 +109,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.logout_menu_item:
-                logout();
-                break;
-            case R.id.admin_menu_item:
-                goToAdminActivity();
-                break;
+        switch (item.getItemId()) {
+        case R.id.logout_menu_item:
+            logout();
+            break;
+        case R.id.admin_menu_item:
+            goToAdminActivity();
+            break;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void setupUI(){
+    private void setupUI() {
         actionBar = getSupportActionBar();
-        sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
-        authenticationController = new AuthenticationController(getApplicationContext());
 
         actionBar.show();
         actionBar.setHomeButtonEnabled(false);
@@ -152,48 +136,47 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        if(sharedPreferencesHelper.userIsEmpty()) goToLoginActivity();
-
+        if (sharedPreferencesHelper.userIsEmpty())
+            goToLoginActivity();
 
     }
 
-    private void notification(){
+    private void notification() {
 
-        //Set the intent you want for when you click on the notification
+        // Set the intent you want for when you click on the notification
         Intent intent = new Intent(this, MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
 
-        //build the notification
+        // build the notification
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, defaultChannel)
-                .setSmallIcon(R.drawable.ic_launcher_background)
-                .setContentTitle("Test Notification")
-                .setContentText("This is a test :)")
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setSmallIcon(R.drawable.ic_launcher_background).setContentTitle("Test Notification")
+                .setContentText("This is a test :)").setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent);
 
-        //Actually display the notification
+        // Actually display the notification
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(420, builder.build()); //Different ID needed for separate cameras? or else can only have one notification for all cameras
+        notificationManager.notify(420, builder.build()); // Different ID needed for separate cameras? or else can only
+                                                          // have one notification for all cameras
 
     }
 
-    private void goToLoginActivity(){
+    private void goToLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
-    private void goToAdminActivity(){
+    private void goToAdminActivity() {
         Intent intent = new Intent(this, AdminActivity.class);
         startActivity(intent);
     }
 
-    private void logout(){
+    private void logout() {
         authenticationController.endSession();
         Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
     }
 
-    private void setupRecyclerView(){
+    private void setupRecyclerView() {
         eventsRecyclerView = findViewById(R.id.eventsRecyclerView);
         sharedPreferencesHelper.getEventsList();
         JSONArray events = sharedPreferencesHelper.getEvents();
@@ -201,18 +184,20 @@ public class MainActivity extends AppCompatActivity {
         // Create layout manager, adapter and dividers between items of the view holder
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(getApplicationContext(), events);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(eventsRecyclerView.getContext(), linearLayoutManager.getOrientation());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(eventsRecyclerView.getContext(),
+                linearLayoutManager.getOrientation());
 
         eventsRecyclerView.setLayoutManager(linearLayoutManager);
         eventsRecyclerView.addItemDecoration(dividerItemDecoration);
         eventsRecyclerView.setAdapter(eventsRecyclerViewAdapter);
     }
 
-    private void setupRealtime(){
+    private void setupRealtime() {
         // Create the connection to the Appwrite server's realtime functionality
         eventsListener = new Realtime(AppwriteController.getClient(getApplicationContext()));
-        eventsListener.subscribe(new String[] {"collections.61871d8957bbc.documents"}, (param) -> {
-            // Implement the lambda function that will run every time there is a change in the events
+        eventsListener.subscribe(new String[] { "collections.61871d8957bbc.documents" }, (param) -> {
+            // Implement the lambda function that will run every time there is a change in
+            // the events
             try {
                 // Get the values in the payload response
                 String eventType = param.getEvent();
@@ -250,8 +235,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 // Otherwise, check which event got modified
                 else {
-                    for(int i = 0; i < sharedPreferencesHelper.getEventsSize(); i++) {
-                        if(payload.getString("$id").equals(events.getJSONObject(i).getString("$id"))) {
+                    for (int i = 0; i < sharedPreferencesHelper.getEventsSize(); i++) {
+                        if (payload.getString("$id").equals(events.getJSONObject(i).getString("$id"))) {
                             // If the event got deleted, remove it from the saved list
                             if (eventType.equals("database.documents.delete")) {
                                 events.remove(i);
@@ -262,7 +247,8 @@ public class MainActivity extends AppCompatActivity {
                                         sharedPreferencesHelper.setEvents(events);
                                         eventsRecyclerViewAdapter.updateList();
                                         eventsRecyclerViewAdapter.notifyDataSetChanged();
-                                        Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_SHORT)
+                                                .show();
                                     }
                                 });
                             }
@@ -289,7 +275,8 @@ public class MainActivity extends AppCompatActivity {
                                         sharedPreferencesHelper.setEvents(events);
                                         eventsRecyclerViewAdapter.updateList();
                                         eventsRecyclerViewAdapter.notifyDataSetChanged();
-                                        Toast.makeText(getApplicationContext(), "Event updated", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), "Event updated", Toast.LENGTH_SHORT)
+                                                .show();
                                     }
                                 });
                             }
