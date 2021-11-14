@@ -1,14 +1,13 @@
-package com.example.androidapp;
+package com.coen390.maskdetector;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+
+import com.coen390.maskdetector.controllers.AuthenticationController;
 
 import java.sql.Timestamp;
 
@@ -19,7 +18,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText emailEditText;
     private EditText passwordEditText;
     private Button loginButton;
-    private SharedPreferencesHelper sharedPreferencesHelper;
     private AuthenticationController authenticationController;
     private ActionBar actionBar;
 
@@ -36,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.password_edit_text);
         loginButton = findViewById(R.id.login_button);
 
-        sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
         authenticationController = new AuthenticationController(getApplicationContext());
 
         actionBar = getSupportActionBar();

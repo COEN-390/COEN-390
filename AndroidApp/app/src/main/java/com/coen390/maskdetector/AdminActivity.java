@@ -1,4 +1,4 @@
-package com.example.androidapp;
+package com.coen390.maskdetector;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,8 +7,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.view.View;
 
+import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
@@ -39,12 +39,7 @@ public class AdminActivity extends AppCompatActivity {
         actionBar.show();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        fabCreateUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new CreateUserDf().show(getSupportFragmentManager(), "CreateUserDf");
-            }
-        });
+        fabCreateUser.setOnClickListener(view -> new CreateUserDf().show(getSupportFragmentManager(), "CreateUserDf"));
     }
 
     protected void setupRecyclerView(){

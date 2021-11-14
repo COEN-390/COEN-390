@@ -1,30 +1,23 @@
-package com.example.androidapp;
+package com.coen390.maskdetector.controllers;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import com.coen390.maskdetector.R;
+import com.coen390.maskdetector.controllers.AppwriteController;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Method;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Date;
 
 import io.appwrite.Client;
 import io.appwrite.exceptions.AppwriteException;
-import io.appwrite.models.RealtimeCallback;
 import io.appwrite.services.Account;
 import io.appwrite.services.Database;
-import io.appwrite.services.Realtime;
-import io.appwrite.views.CallbackActivity;
 import kotlin.coroutines.Continuation;
 import kotlin.Result;
 import kotlin.coroutines.CoroutineContext;
@@ -46,11 +39,8 @@ public class SharedPreferencesHelper {
         this.editor = sharedPreferences.edit();
 
         // Initialize the Appwrite communication
-        this.client = new Client(context)
-                .setEndpoint("https://appwrite.orpine.net/v1")
-                .setProject("6137a2ef0d4f5");
+        this.client = AppwriteController.getClient(context);
         this.account = new Account(this.client);
-
         this.events = new Database(this.client);
 
     }
@@ -85,7 +75,7 @@ public class SharedPreferencesHelper {
         editor.apply();
     }
 
-    private void getEventsList(){
+    public void getEventsList(){
         try {
             events.listDocuments(
                     "61871d8957bbc",
@@ -128,15 +118,40 @@ public class SharedPreferencesHelper {
         }
     }
 
-    public JSONObject getEvents(){
-        getEventsList();
+    public JSONArray getEvents(){
         String json = sharedPreferences.getString("events", "{\"sum\":0,\"documents\":[]}");
         try {
-            return new JSONObject(json);
+            JSONObject events = new JSONObject(json);
+            return events.getJSONArray("documents");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return null;
+        return new JSONArray();
+    }
+
+    public int getEventsSize(){
+        String json = sharedPreferences.getString("events", "{\"sum\":0,\"documents\":[]}");
+        try {
+            JSONObject events = new JSONObject(json);
+            return events.getInt("sum");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void setEvents(JSONArray events){
+        // Take the current set of events and modify it accordingly
+        String json = sharedPreferences.getString("events", "{\"sum\":0,\"documents\":[]}");
+        try {
+            JSONObject eventsList = new JSONObject(json);
+            eventsList.put("sum", events.length());
+            eventsList.put("documents", events);
+            editor.putString("events", eventsList.toString());
+            editor.commit();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public Client getClient(){
