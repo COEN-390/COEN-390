@@ -73,14 +73,16 @@ public class MainActivity extends AppCompatActivity {
 
         eventsListener = new Realtime(sharedPreferencesHelper.getClient());
         eventsListener.subscribe(new String[] {"collections.61871d8957bbc.documents"}, (param) -> {
-            // TODO: find a way to make the recycler view update
-            MainActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    eventsRecyclerViewAdapter.notifyDataSetChanged();
-                }
-            });
+            System.out.println(param.toString());
             return null;
+//            // TODO: find a way to make the recycler view update
+//            MainActivity.this.runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    eventsRecyclerViewAdapter.notifyDataSetChanged();
+//                }
+//            });
+//            return null;
         });
     }
 

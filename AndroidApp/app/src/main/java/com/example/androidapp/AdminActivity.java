@@ -39,12 +39,7 @@ public class AdminActivity extends AppCompatActivity {
         actionBar.show();
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        fabCreateUser.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new CreateUserDf().show(getSupportFragmentManager(), "CreateUserDf");
-            }
-        });
+        fabCreateUser.setOnClickListener(view -> new CreateUserDf().show(getSupportFragmentManager(), "CreateUserDf"));
     }
 
     protected void setupRecyclerView(){

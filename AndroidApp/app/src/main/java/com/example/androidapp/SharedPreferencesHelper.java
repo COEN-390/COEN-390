@@ -46,11 +46,8 @@ public class SharedPreferencesHelper {
         this.editor = sharedPreferences.edit();
 
         // Initialize the Appwrite communication
-        this.client = new Client(context)
-                .setEndpoint("https://appwrite.orpine.net/v1")
-                .setProject("6137a2ef0d4f5");
+        this.client = AppwriteController.getClient(context);
         this.account = new Account(this.client);
-
         this.events = new Database(this.client);
 
     }

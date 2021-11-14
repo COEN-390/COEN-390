@@ -19,7 +19,6 @@ public class LoginActivity extends AppCompatActivity {
     private EditText emailEditText;
     private EditText passwordEditText;
     private Button loginButton;
-    private SharedPreferencesHelper sharedPreferencesHelper;
     private AuthenticationController authenticationController;
     private ActionBar actionBar;
 
@@ -36,7 +35,6 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.password_edit_text);
         loginButton = findViewById(R.id.login_button);
 
-        sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
         authenticationController = new AuthenticationController(getApplicationContext());
 
         actionBar = getSupportActionBar();

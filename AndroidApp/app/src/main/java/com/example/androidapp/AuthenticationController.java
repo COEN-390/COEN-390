@@ -28,15 +28,12 @@ public class AuthenticationController {
 
     public AuthenticationController(Context context) {
         this.context = context;
+        sharedPreferencesHelper = new SharedPreferencesHelper(context);
 
         // Initialize Appwrite SDK
-        this.client = new Client(context)
-                .setEndpoint("https://appwrite.orpine.net/v1")
-                .setProject("6137a2ef0d4f5");
-
+        this.client = AppwriteController.getClient(context);
         this.account = new Account(this.client);
         this.db = new Database(this.client);
-        sharedPreferencesHelper = new SharedPreferencesHelper(context);
     }
 
     public void createSession(String email, String password) throws AppwriteException {
