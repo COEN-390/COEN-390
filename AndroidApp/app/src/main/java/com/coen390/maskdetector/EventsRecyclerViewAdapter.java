@@ -53,7 +53,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         try {
             JSONObject event = events.getJSONObject(position);
-            Date date = new Date((long) event.getDouble("timestamp"));
+            Date date = new Date(((long) event.getDouble("timestamp")) * 1000);
             holder.getItemText().setText(date.toString());
         } catch (JSONException e) {
             e.printStackTrace();
