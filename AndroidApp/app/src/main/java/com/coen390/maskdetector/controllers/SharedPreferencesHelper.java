@@ -8,6 +8,7 @@ import com.coen390.maskdetector.R;
 import com.coen390.maskdetector.controllers.AppwriteController;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -74,7 +75,7 @@ public class SharedPreferencesHelper {
         editor.apply();
     }
 
-    private void getEventsList(){
+    public void getEventsList(){
         try {
             events.listDocuments(
                     "61871d8957bbc",
@@ -117,15 +118,39 @@ public class SharedPreferencesHelper {
         }
     }
 
-    public JSONObject getEvents(){
-        getEventsList();
+    public JSONArray getEvents(){
         String json = sharedPreferences.getString("events", "{\"sum\":0,\"documents\":[]}");
         try {
-            return new JSONObject(json);
+            JSONObject events = new JSONObject(json);
+            return events.getJSONArray("documents");
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return null;
+        return new JSONArray();
+    }
+
+    public int getEventsSize(){
+        String json = sharedPreferences.getString("events", "{\"sum\":0,\"documents\":[]}");
+        try {
+            JSONObject events = new JSONObject(json);
+            return events.getInt("sum");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void setEvents(JSONArray events){
+        String json = sharedPreferences.getString("events", "{\"sum\":0,\"documents\":[]}");
+        try {
+            JSONObject eventsList = new JSONObject(json);
+            eventsList.put("sum", events.length());
+            eventsList.put("documents", events);
+            editor.putString("events", eventsList.toString());
+            editor.commit();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public Client getClient(){

@@ -29,8 +29,12 @@ import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Date;
 
 import io.appwrite.services.Realtime;
 
@@ -63,17 +67,7 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannel();
         setupUI();
         setupRecyclerView();
-
-        eventsListener = new Realtime(AppwriteController.getClient(getApplicationContext()));
-        eventsListener.subscribe(new String[] {"collections.61871d8957bbc.documents"}, (param) -> {
-            try {
-                JSONObject response = new JSONObject(param.getPayload().toString());
-                System.out.println((response.getString("timestamp")));
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        });
+        setupRealtime();
     }
 
     /**
@@ -201,7 +195,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupRecyclerView(){
         eventsRecyclerView = findViewById(R.id.eventsRecyclerView);
-        JSONObject events = sharedPreferencesHelper.getEvents();
+        sharedPreferencesHelper.getEventsList();
+        JSONArray events = sharedPreferencesHelper.getEvents();
 
         // Create layout manager, adapter and dividers between items of the view holder
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -211,5 +206,76 @@ public class MainActivity extends AppCompatActivity {
         eventsRecyclerView.setLayoutManager(linearLayoutManager);
         eventsRecyclerView.addItemDecoration(dividerItemDecoration);
         eventsRecyclerView.setAdapter(eventsRecyclerViewAdapter);
+    }
+
+    private void setupRealtime(){
+        // Create the connection to the Appwrite server's realtime functionality
+        eventsListener = new Realtime(AppwriteController.getClient(getApplicationContext()));
+        eventsListener.subscribe(new String[] {"collections.61871d8957bbc.documents"}, (param) -> {
+            // Implement the lambda function that will run every time there is a change in the events
+            try {
+                // Get the values in the payload response
+                String eventType = param.getEvent();
+                Date timestamp = new Date(param.getTimestamp());
+                JSONObject payload = new JSONObject(param.getPayload().toString());
+                System.out.println(timestamp.toString() + ": " + eventType);
+
+                // If an event gets created, add it to the saved list of events
+                JSONArray events = sharedPreferencesHelper.getEvents();
+                if (eventType.equals("database.documents.create")) {
+                    MainActivity.this.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            JSONObject event = new JSONObject();
+                            // Payload is not in the same order, so create a proper new JSON object
+                            try {
+                                event.put("$id", payload.getString("$id"));
+                                event.put("$collection", payload.getString("$collection"));
+                                event.put("$permissions", payload.getString("$permissions"));
+                                event.put("timestamp", payload.getString("timestamp"));
+                                event.put("organizationId", payload.getString("organizationId"));
+                                event.put("$deviceId", payload.getString("deviceId"));
+                                events.put(event);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            sharedPreferencesHelper.setEvents(events);
+                            eventsRecyclerViewAdapter.updateList();
+                            eventsRecyclerViewAdapter.notifyDataSetChanged();
+                            Toast.makeText(getApplicationContext(), "Event created", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+                // Otherwise, check which event got modified
+                else {
+                    for(int i = 0; i < sharedPreferencesHelper.getEventsSize(); i++) {
+                        if(payload.getString("$id").equals(events.getJSONObject(i).getString("$id"))) {
+                            // If the event got deleted, remove it from the saved list
+                            if (eventType.equals("database.documents.delete")) {
+                                MainActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                            // If it got updated, modify it
+                            else {
+                                MainActivity.this.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Toast.makeText(getApplicationContext(), "Event updated", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+                            }
+                            break;
+                        }
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        });
     }
 }

@@ -36,14 +36,10 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
         }
     }
 
-    public EventsRecyclerViewAdapter(Context context, JSONObject events) {
+    public EventsRecyclerViewAdapter(Context context, JSONArray events) {
         this.sharedPreferencesHelper = new SharedPreferencesHelper(context);
-        try {
-            this.events = events.getJSONArray("documents");
-            this.size = events.getInt("sum");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        this.events = events;
+        this.size = sharedPreferencesHelper.getEventsSize();
     }
 
     @NonNull
@@ -55,20 +51,13 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        JSONObject event = new JSONObject();
-        Date date = new Date();
         try {
-            event = events.getJSONObject(position);
+            JSONObject event = events.getJSONObject(position);
+            Date date = new Date((long) event.getDouble("timestamp"));
+            holder.getItemText().setText(date.toString());
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        try {
-            date = new Date((long) event.getDouble("timestamp"));
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        holder.getItemText().setText(date.toString());
 
         // Set onClickListener for every item to the same activity
 //        holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -86,5 +75,10 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
     @Override
     public int getItemCount() {
         return this.size;
+    }
+
+    public void updateList(){
+        events = sharedPreferencesHelper.getEvents();
+        size = sharedPreferencesHelper.getEventsSize();
     }
 }
