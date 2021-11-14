@@ -1,6 +1,5 @@
-package com.example.androidapp;
+package com.coen390.maskdetector;
 
-import androidx.annotation.MainThread;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,21 +21,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
+import com.coen390.maskdetector.controllers.AppwriteController;
+import com.coen390.maskdetector.controllers.AuthenticationController;
+import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.zip.Inflater;
-
-import io.appwrite.models.RealtimeCallback;
-import io.appwrite.models.RealtimeResponseEvent;
 import io.appwrite.services.Realtime;
 
 public class MainActivity extends AppCompatActivity {
@@ -63,26 +58,21 @@ public class MainActivity extends AppCompatActivity {
         Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
         startService(intentBackgroundService);
 
-//        String token = PushNotificationService.getToken(this);
-//        Log.d(TAG, "Token Received: " + token);
         tokenCall();
 
         createNotificationChannel();
         setupUI();
         setupRecyclerView();
 
-        eventsListener = new Realtime(sharedPreferencesHelper.getClient());
+        eventsListener = new Realtime(AppwriteController.getClient(getApplicationContext()));
         eventsListener.subscribe(new String[] {"collections.61871d8957bbc.documents"}, (param) -> {
-            System.out.println(param.toString());
+            try {
+                JSONObject response = new JSONObject(param.getPayload().toString());
+                System.out.println((response.getString("timestamp")));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
             return null;
-//            // TODO: find a way to make the recycler view update
-//            MainActivity.this.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    eventsRecyclerViewAdapter.notifyDataSetChanged();
-//                }
-//            });
-//            return null;
         });
     }
 

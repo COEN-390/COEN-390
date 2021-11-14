@@ -1,4 +1,4 @@
-package com.example.androidapp;
+package com.coen390.maskdetector;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;

@@ -1,30 +1,22 @@
-package com.example.androidapp;
+package com.coen390.maskdetector.controllers;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.widget.Toast;
 
-import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
+import com.coen390.maskdetector.R;
+import com.coen390.maskdetector.controllers.AppwriteController;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.lang.reflect.Method;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.util.Date;
 
 import io.appwrite.Client;
 import io.appwrite.exceptions.AppwriteException;
-import io.appwrite.models.RealtimeCallback;
 import io.appwrite.services.Account;
 import io.appwrite.services.Database;
-import io.appwrite.services.Realtime;
-import io.appwrite.views.CallbackActivity;
 import kotlin.coroutines.Continuation;
 import kotlin.Result;
 import kotlin.coroutines.CoroutineContext;

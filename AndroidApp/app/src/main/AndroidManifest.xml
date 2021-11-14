@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.androidapp">
+    package="com.coen390.maskdetector">
 
     <application
         android:allowBackup="true"
@@ -15,7 +15,7 @@
             android:label="User Management">
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
-            android:value="com.example.androidapp.MainActivity"/>
+            android:value="com.coen390.maskdetector.MainActivity"/>
         </activity>
         <activity
             android:name=".LoginActivity"

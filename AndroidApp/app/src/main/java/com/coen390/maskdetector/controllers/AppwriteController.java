@@ -1,4 +1,4 @@
-package com.example.androidapp;
+package com.coen390.maskdetector.controllers;
 
 import android.content.Context;
 

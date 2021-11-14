@@ -1,4 +1,4 @@
-package com.example.androidapp;
+package com.coen390.maskdetector;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,6 +12,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+
+import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
 
 public class CreateUserDf extends DialogFragment {
 

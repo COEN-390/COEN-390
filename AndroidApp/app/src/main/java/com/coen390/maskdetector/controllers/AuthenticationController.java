@@ -1,9 +1,12 @@
-package com.example.androidapp;
+package com.coen390.maskdetector.controllers;
 
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
+
+import com.coen390.maskdetector.LoginActivity;
+import com.coen390.maskdetector.MainActivity;
 
 import org.jetbrains.annotations.NotNull;
 
