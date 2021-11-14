@@ -12,7 +12,7 @@ namespace FCMPushNotifications
         static async Task Main(string[] args)
         {
             // Contains the JSON passed to the cloud function
-            //var eventData = Environment.GetEnvironmentVariable("APPWRITE_FUNCTION_EVENT_DATA");
+            var eventData = Environment.GetEnvironmentVariable("APPWRITE_FUNCTION_DATA");
             //dynamic eventDataJson = JObject.Parse(eventData);
 
             // Grabs the GOOGLE_APPLICATION_CREDENTIALS from the environment variable to authenticate to FCM
@@ -26,9 +26,8 @@ namespace FCMPushNotifications
             {
                 Notification = new Notification()
                 {
-                    //Authorization="AAAA052hQHY:APA91bGyWmgzuCsGyO3eC5mex9mOmrgTEtUG5Dk5ffupNCN_KfLVGJk3hlUp4Oi7mECmyVp3KDImMhI3MtKVziLoh6Gb1zs21Vwp8Bv2Wbe2ZJ858fO1js16yeZ0VtQG_8v4Vvv8CvwV",
-                    Title = "Test title",
-                    Body = "test body",
+                    Title = "No Mask Detected!!",
+                    Body = eventData,
                     ImageUrl = "https://icons.iconarchive.com/icons/paomedia/small-n-flat/256/cat-icon.png"
                 },
                 Android = new AndroidConfig()
