@@ -30,19 +30,13 @@ public class DevicesActivity extends AppCompatActivity {
 
         devicesController = new DevicesController(this.getApplicationContext());
         setupUI();
+        setupRecyclerView();
     }
 
     private void setupUI() {
-        DevicesActivity.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                actionBar = getSupportActionBar();
-                actionBar.show();
-                actionBar.setDisplayHomeAsUpEnabled(true);
-
-                setupRecyclerView();
-            }
-        });
+        actionBar = getSupportActionBar();
+        actionBar.show();
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     private void setupRecyclerView() {
