@@ -115,6 +115,9 @@ public class MainActivity extends AppCompatActivity {
         case R.id.admin_menu_item:
             goToAdminActivity();
             break;
+            case R.id.device_menu_item:
+            goToDevicesActivity();
+            break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -167,6 +170,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToAdminActivity() {
         Intent intent = new Intent(this, AdminActivity.class);
+        startActivity(intent);
+    }
+
+    private void goToDevicesActivity() {
+        Intent intent = new Intent(this, DevicesActivity.class);
         startActivity(intent);
     }
 

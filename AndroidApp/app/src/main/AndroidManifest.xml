@@ -10,12 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidApp">
         <activity
+            android:name=".DevicesActivity"
+            android:exported="true" />
+        <activity
             android:name=".AdminActivity"
             android:exported="true"
             android:label="User Management">
-        <meta-data
-            android:name="android.support.PARENT_ACTIVITY"
-            android:value="com.coen390.maskdetector.MainActivity"/>
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.coen390.maskdetector.MainActivity" />
         </activity>
         <activity
             android:name=".LoginActivity"
