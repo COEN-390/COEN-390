@@ -26,9 +26,6 @@ import android.widget.Toast;
 import com.coen390.maskdetector.controllers.AppwriteController;
 import com.coen390.maskdetector.controllers.AuthenticationController;
 import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -169,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void goToAdminActivity() {
-        Intent intent = new Intent(this, AdminActivity.class);
+        Intent intent = new Intent(this, UsersActivity.class);
         startActivity(intent);
     }
 

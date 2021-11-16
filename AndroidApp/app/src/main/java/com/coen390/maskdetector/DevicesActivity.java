@@ -1,10 +1,12 @@
 package com.coen390.maskdetector;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Notification;
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -19,6 +21,7 @@ public class DevicesActivity extends AppCompatActivity {
     private DevicesRecyclerViewAdapter devicesRecyclerViewAdapter;
     private RecyclerView devicesRecyclerView;
     private DevicesController devicesController;
+    private ActionBar actionBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +36,10 @@ public class DevicesActivity extends AppCompatActivity {
         DevicesActivity.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
+                actionBar = getSupportActionBar();
+                actionBar.show();
+                actionBar.setDisplayHomeAsUpEnabled(true);
+
                 setupRecyclerView();
             }
         });

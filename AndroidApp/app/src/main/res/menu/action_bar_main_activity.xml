@@ -9,5 +9,5 @@
         android:title="User Management" />
     <item
         android:id="@+id/device_menu_item"
-        android:title="Device Management" />
+        android:title="Devices Health" />
 </menu>

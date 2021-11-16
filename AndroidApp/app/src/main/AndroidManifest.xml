@@ -11,9 +11,14 @@
         android:theme="@style/Theme.AndroidApp">
         <activity
             android:name=".DevicesActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:label="Devices Health">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.coen390.maskdetector.MainActivity" />
+        </activity>
         <activity
-            android:name=".AdminActivity"
+            android:name=".UsersActivity"
             android:exported="true"
             android:label="User Management">
             <meta-data

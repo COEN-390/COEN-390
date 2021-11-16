@@ -65,7 +65,7 @@ public class CreateUserDf extends DialogFragment {
                 (new Handler()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        ((AdminActivity) requireActivity()).setupRecyclerView();
+                        ((UsersActivity) requireActivity()).setupRecyclerView();
                         dismiss();
                     }
                 }, 5000);
