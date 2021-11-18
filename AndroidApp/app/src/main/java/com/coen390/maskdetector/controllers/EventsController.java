@@ -18,7 +18,9 @@ import java.sql.Array;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.appwrite.Client;
 import io.appwrite.exceptions.AppwriteException;
@@ -162,5 +164,47 @@ public class EventsController {
             }
             return null;
         });
+    }
+
+    public void updateEvent(Event event){
+        // Create the map of values
+        Map<String, Object> values = new HashMap<>();
+        values.put("timestamp", event.getTimestamp());
+        values.put("organizationId", event.getOrganizationId());
+        values.put("deviceId", event.getDeviceId());
+        values.put("saved", event.isSaved());
+
+        try {
+            db.updateDocument(
+                    "61871d8957bbc",
+                    event.get$id(),
+                    values,
+                    new Continuation<Object>() {
+                        @NotNull
+                        @Override
+                        public CoroutineContext getContext() {
+                            return EmptyCoroutineContext.INSTANCE;
+                        }
+
+                        @Override
+                        public void resumeWith(@NotNull Object o) {
+                            String json = "";
+                            try {
+                                if (o instanceof Result.Failure) {
+                                    Result.Failure failure = (Result.Failure) o;
+                                    throw failure.exception;
+                                } else {
+                                    Response response = (Response) o;
+                                    json = response.body().string();
+                                }
+                            } catch (Throwable th) {
+                                Log.e("ERROR", th.toString());
+                            }
+                        }
+                    }
+            );
+        } catch (AppwriteException e) {
+            e.printStackTrace();
+        }
     }
 }

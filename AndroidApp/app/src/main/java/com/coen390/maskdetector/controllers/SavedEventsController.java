@@ -174,8 +174,9 @@ public class SavedEventsController {
         values.put("timestamp", event.getTimestamp());
         values.put("organizationId", event.getOrganizationId());
         values.put("deviceId", event.getDeviceId());
+        values.put("eventId", event.get$id());
 
-        // Create the permissions (write so that the admin can change the event's name
+        // Create the permissions (write so that the admin can change the event's name)
         List<String> read = new ArrayList<String>();
         List<String> write = new ArrayList<String>();
         read.add("*");

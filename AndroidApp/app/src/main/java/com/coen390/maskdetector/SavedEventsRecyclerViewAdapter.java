@@ -72,7 +72,7 @@ public class SavedEventsRecyclerViewAdapter extends RecyclerView.Adapter<SavedEv
 //                intent.putExtra("studentId", sortedProfiles.get(pos).getStudentId());
 //                view.getContext().startActivity(intent);
 //            }
-//        }); // MIGHT NEED THIS
+//        }); // TODO: IMPLEMENT A DF TO BE ABLE TO EITHER CHANGE THE NAME OF THE SAVED EVENT OR DELETE THE ENTIRE THING
     }
 
     @Override

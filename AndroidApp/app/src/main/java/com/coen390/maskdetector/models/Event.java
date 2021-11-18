@@ -18,6 +18,7 @@ public class Event {
     private Double timestamp;
     private String organizationId;
     private String deviceId;
+    private boolean saved;
 
     public Event(JSONObject event){
         try {
@@ -27,6 +28,7 @@ public class Event {
             this.timestamp = event.getDouble("timestamp");
             this.organizationId = event.getString("organizationId");
             this.deviceId = event.getString("deviceId");
+            this.saved = event.getBoolean("saved");
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -113,6 +115,10 @@ public class Event {
         return deviceId;
     }
 
+    public boolean isSaved() {
+        return saved;
+    }
+
     // Setter Methods
 
     public void set$id(String id) {
@@ -133,5 +139,9 @@ public class Event {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public void setSaved(boolean saved) {
+        this.saved = saved;
     }
 }

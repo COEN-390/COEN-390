@@ -1,7 +1,6 @@
 package com.coen390.maskdetector;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
@@ -20,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import kotlin.coroutines.EmptyCoroutineContext;
-
 public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecyclerViewAdapter.ViewHolder> {
 
     private SharedPreferencesHelper sharedPreferencesHelper;
@@ -30,12 +25,13 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
     private MainActivity mainActivity;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
-        private TextView eventTimestampText, eventDeviceText;
+        private TextView eventTimestampText, eventDeviceText, eventSavedStateText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             eventTimestampText = itemView.findViewById(R.id.eventTimestampText);
             eventDeviceText = itemView.findViewById(R.id.eventDeviceText);
+            eventSavedStateText = itemView.findViewById(R.id.eventSavedStateText);
         }
 
         public TextView getEventTimestampText() {
@@ -44,7 +40,9 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
         public TextView getEventDeviceText(){
             return eventDeviceText;
         }
-
+        public TextView getEventSavedStateText() {
+            return eventSavedStateText;
+        }
     }
 
     public EventsRecyclerViewAdapter(Context context, MainActivity mainActivity) {
@@ -64,6 +62,8 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.getEventTimestampText().setText((new Date((long)(events.get(position).getTimestamp() * 1000))).toString());
         holder.getEventDeviceText().setText("Device: " + events.get(position).getDeviceId());
+        if(events.get(position).isSaved()) holder.getEventSavedStateText().setText("Saved");
+        else holder.getEventSavedStateText().setText("");
 
         // Set onClickListener for every item to the same activity
         holder.itemView.setOnClickListener(new View.OnClickListener() {

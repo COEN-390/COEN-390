@@ -5,13 +5,15 @@ import org.json.JSONObject;
 
 public class SavedEvent {
 
-    public String name;
-    public Event event;
+    private String name;
+    private Event event;
+    private String eventId;
 
     public SavedEvent(JSONObject event){
         try {
             this.name = event.getString("name");
             this.event = new Event(event);
+            this.eventId = this.event.get$id();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -23,6 +25,10 @@ public class SavedEvent {
 
     public Event getEvent() {
         return event;
+    }
+
+    public String getEventId() {
+        return eventId;
     }
 
     public void setName(String name){

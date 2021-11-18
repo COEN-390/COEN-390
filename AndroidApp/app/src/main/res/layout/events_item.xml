@@ -23,4 +23,15 @@
         android:text="TextView"
         android:textColor="@color/black"
         android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/eventSavedStateText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginEnd="12dp"
+        android:layout_marginBottom="12dp"
+        android:text="TextView"
+        android:textColor="#80000000"
+        android:textSize="18sp" />
 </FrameLayout>

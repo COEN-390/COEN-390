@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.coen390.maskdetector.controllers.EventsController;
 import com.coen390.maskdetector.controllers.SavedEventsController;
 import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
 import com.coen390.maskdetector.models.Event;
@@ -25,6 +26,7 @@ public class SaveEventDf extends DialogFragment {
     private EditText editSaveEventName;
     private Button saveEventButton, cancelSaveEventButton;
     private SavedEventsController savedEventsController;
+    private EventsController eventsController;
 
     @Nullable
     @Override
@@ -37,6 +39,7 @@ public class SaveEventDf extends DialogFragment {
         cancelSaveEventButton = view.findViewById(R.id.buttonCancelSaveEvent);
 
         savedEventsController = new SavedEventsController(((MainActivity) requireActivity()).getApplicationContext());
+        eventsController = new EventsController(((MainActivity) requireActivity()).getApplicationContext());
 
         saveEventButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,7 +56,9 @@ public class SaveEventDf extends DialogFragment {
                 Bundle bundle = getArguments();
                 try {
                     Event event = new Event(new JSONObject(bundle.getString("event")));
+                    event.setSaved(true);
                     savedEventsController.createSavedEvent(name, event);
+                    eventsController.updateEvent(event);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
