@@ -33,6 +33,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import io.appwrite.services.Realtime;
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         eventsRecyclerView = findViewById(R.id.eventsRecyclerView);
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(getApplicationContext());
-        eventsController.getEventsList(eventsRecyclerViewAdapter, this);
+        eventsController.getEventsList(eventsRecyclerViewAdapter, this, new ArrayList<Event>());
 
         // Create layout manager and dividers between items of the view holder
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);

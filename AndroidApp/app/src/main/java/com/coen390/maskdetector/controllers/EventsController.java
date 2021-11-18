@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Array;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -40,10 +41,15 @@ public class EventsController {
         this.db = new Database(this.client);
     }
 
-    public void getEventsList(EventsRecyclerViewAdapter eventsRecyclerViewAdapter, MainActivity mainActivity){
+    public void getEventsList(EventsRecyclerViewAdapter eventsRecyclerViewAdapter, MainActivity mainActivity, List<Event> events){
+        List<String> filters = new ArrayList<String>();
+        filters.add("organizationId=testOrganization");
         try {
             db.listDocuments(
-                    "61871d8957bbc",
+                    "61871d8957bbc", // Collection ID
+                    filters, // Filters for the search
+                    100, // Limit of the number of documents in the payload (cannot go higher than 100)
+                    events.size(), // Offset from which to start the search in the DB
                     new Continuation<Object>() {
                         @NotNull
                         @Override
@@ -64,10 +70,14 @@ public class EventsController {
                                     JSONObject payload = new JSONObject(json);
                                     JSONArray documentList = payload.getJSONArray("documents");
                                     // Initialize the list of devices from JSON
-                                    List<Event> events = new ArrayList<>();
                                     for (int i = 0; i < documentList.length(); i ++) {
                                         Event newEvent = new Event(documentList.getJSONObject(i));
                                         events.add(newEvent);
+                                    }
+                                    // If not all the events in the DB have been filtered, recursively search again
+                                    // ("sum" value is dependant on filters, no need to go through all the documents in the entire server)
+                                    if(events.size() < payload.getInt("sum")){
+                                        getEventsList(eventsRecyclerViewAdapter, mainActivity, events);
                                     }
                                     mainActivity.runOnUiThread(new Runnable() {
                                         @Override
@@ -96,6 +106,7 @@ public class EventsController {
         }
     }
 
+
     public void setupEventsRealtime(Context context, EventsRecyclerViewAdapter eventsRecyclerViewAdapter, MainActivity mainActivity) {
         // Create the connection to the Appwrite server's realtime functionality
         Realtime eventsListener = new Realtime(AppwriteController.getClient(context));
@@ -118,7 +129,7 @@ public class EventsController {
                         public void run() {
                             eventsRecyclerViewAdapter.addEvent(event);
                             eventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(mainActivity.getApplicationContext(), "New Alert!", Toast.LENGTH_LONG);
+                            Toast.makeText(mainActivity.getApplicationContext(), "New Alert!", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -128,7 +139,7 @@ public class EventsController {
                         public void run() {
                             eventsRecyclerViewAdapter.deleteEvent(event);
                             eventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(context, "Alert deleted", Toast.LENGTH_LONG);
+                            Toast.makeText(context, "Alert deleted", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -139,7 +150,7 @@ public class EventsController {
                         public void run() {
                             eventsRecyclerViewAdapter.modifyEvent(event);
                             eventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(mainActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG);
+                            Toast.makeText(mainActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG).show();
                         }
                     });
                 }

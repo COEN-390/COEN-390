@@ -27,30 +27,6 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
     private List<Event> events;
     private Context context;
 
-    public void addEvent(Event event) {
-        events.add(event);
-    }
-
-    public void deleteEvent(Event event) {
-        for(int i = 0; i < events.size(); i++){
-            if(event.getId().equals(events.get(i).getId())){
-                events.remove(i);
-            }
-        }
-    }
-
-    public void modifyEvent(Event event) {
-        for(int i = 0; i < events.size(); i++){
-            if(event.getId().equals(events.get(i).getId())){
-                events.set(i, event);
-            }
-        }
-    }
-
-    public void setEventsList(List<Event> eventsList) {
-        events = eventsList;
-    }
-
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView eventText;
 
@@ -96,5 +72,29 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
     @Override
     public int getItemCount() {
         return events.size();
+    }
+
+    public void addEvent(Event event) {
+        events.add(event);
+    }
+
+    public void deleteEvent(Event event) {
+        for(int i = 0; i < events.size(); i++){
+            if(event.getId().equals(events.get(i).getId())){
+                events.remove(i);
+            }
+        }
+    }
+
+    public void modifyEvent(Event event) {
+        for(int i = 0; i < events.size(); i++){
+            if(event.getId().equals(events.get(i).getId())){
+                events.set(i, event);
+            }
+        }
+    }
+
+    public void setEventsList(List<Event> eventsList) {
+        events = eventsList;
     }
 }
