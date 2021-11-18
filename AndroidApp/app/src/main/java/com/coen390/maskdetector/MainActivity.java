@@ -46,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
     private AuthenticationController authenticationController;
     private ActionBar actionBar;
     private MenuInflater menuInflater;
-    private Button testButton;
     private RecyclerView eventsRecyclerView;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
     private EventsController eventsController;
@@ -108,6 +107,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+//        if(/* TODO: user isn't admin */) {
+//            menu.findItem(R.id.admin_menu_item).setVisible(false);
+//            menu.findItem(R.id.saved_events_menu_item).setVisible(false);
+//        }
+//        else{
+//            menu.findItem(R.id.admin_menu_item).setVisible(true);
+//            menu.findItem(R.id.saved_events_menu_item).setVisible(true);
+//        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
         case R.id.logout_menu_item:
@@ -116,8 +129,11 @@ public class MainActivity extends AppCompatActivity {
         case R.id.admin_menu_item:
             goToAdminActivity();
             break;
-            case R.id.device_menu_item:
+        case R.id.device_menu_item:
             goToDevicesActivity();
+            break;
+        case R.id.saved_events_menu_item:
+            goToSavedEventsActivity();
             break;
         }
 
@@ -130,39 +146,30 @@ public class MainActivity extends AppCompatActivity {
         actionBar.show();
         actionBar.setHomeButtonEnabled(false);
 
-        testButton = findViewById(R.id.testButton);
-
-        testButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                notification();
-            }
-        });
-
         if (sharedPreferencesHelper.userIsEmpty())
             goToLoginActivity();
 
     }
 
-    private void notification() {
-
-        // Set the intent you want for when you click on the notification
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-        // build the notification
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, defaultChannel)
-                .setSmallIcon(R.drawable.ic_launcher_background).setContentTitle("Test Notification")
-                .setContentText("This is a test :)").setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent);
-
-        // Actually display the notification
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(420, builder.build()); // Different ID needed for separate cameras? or else can only
-                                                          // have one notification for all cameras
-
-    }
+//    private void notification() {
+//
+//        // Set the intent you want for when you click on the notification
+//        Intent intent = new Intent(this, MainActivity.class);
+//        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
+//
+//        // build the notification
+//        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, defaultChannel)
+//                .setSmallIcon(R.drawable.ic_launcher_background).setContentTitle("Test Notification")
+//                .setContentText("This is a test :)").setPriority(NotificationCompat.PRIORITY_HIGH)
+//                .setContentIntent(pendingIntent);
+//
+//        // Actually display the notification
+//        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+//        notificationManager.notify(420, builder.build()); // Different ID needed for separate cameras? or else can only
+//                                                          // have one notification for all cameras
+//
+//    } // NOT USEFUL ANYMORE
 
     private void goToLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
@@ -179,6 +186,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void goToSavedEventsActivity() {
+        Intent intent = new Intent(this, SavedEventsActivity.class);
+        startActivity(intent);
+    }
+
     private void logout() {
         authenticationController.endSession();
         Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
@@ -186,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         eventsRecyclerView = findViewById(R.id.eventsRecyclerView);
-        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(getApplicationContext());
+        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(getApplicationContext(), this);
         eventsController.getEventsList(eventsRecyclerViewAdapter, this, new ArrayList<Event>());
 
         // Create layout manager and dividers between items of the view holder
