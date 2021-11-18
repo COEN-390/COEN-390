@@ -25,7 +25,9 @@ import android.widget.Toast;
 
 import com.coen390.maskdetector.controllers.AppwriteController;
 import com.coen390.maskdetector.controllers.AuthenticationController;
+import com.coen390.maskdetector.controllers.EventsController;
 import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
+import com.coen390.maskdetector.models.Event;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private Button testButton;
     private RecyclerView eventsRecyclerView;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
-    private Realtime eventsListener;
+    private EventsController eventsController;
     // Notification channel ID. Put it somewhere better
     private String defaultChannel = "defaultChannel";
 
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
         authenticationController = new AuthenticationController(getApplicationContext());
+        eventsController = new EventsController(getApplicationContext());
         // if(!sharedPreferencesHelper.userIsEmpty()) {
         // Intent intentBackgroundService = new Intent(this,
         // PushNotificationService.class);
@@ -72,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         createNotificationChannel();
         setupUI();
         setupRecyclerView();
-        setupRealtime();
+        eventsController.setupEventsRealtime(getApplicationContext(), eventsRecyclerViewAdapter, this);
     }
 
     // Must do at the start before notifications can happen. Maybe put in main
@@ -182,116 +185,16 @@ public class MainActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         eventsRecyclerView = findViewById(R.id.eventsRecyclerView);
-        sharedPreferencesHelper.getEventsList();
-        JSONArray events = sharedPreferencesHelper.getEvents();
+        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(getApplicationContext());
+        eventsController.getEventsList(eventsRecyclerViewAdapter, this);
 
-        // Create layout manager, adapter and dividers between items of the view holder
+        // Create layout manager and dividers between items of the view holder
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(getApplicationContext(), events);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(eventsRecyclerView.getContext(),
                 linearLayoutManager.getOrientation());
 
         eventsRecyclerView.setLayoutManager(linearLayoutManager);
         eventsRecyclerView.addItemDecoration(dividerItemDecoration);
         eventsRecyclerView.setAdapter(eventsRecyclerViewAdapter);
-    }
-
-    private void setupRealtime() {
-        // Create the connection to the Appwrite server's realtime functionality
-        eventsListener = new Realtime(AppwriteController.getClient(getApplicationContext()));
-        eventsListener.subscribe(new String[] { "collections.61871d8957bbc.documents" }, (param) -> {
-            // Implement the lambda function that will run every time there is a change in
-            // the events
-            try {
-                // Get the values in the payload response
-                String eventType = param.getEvent();
-                Date timestamp = new Date(param.getTimestamp());
-                JSONObject payload = new JSONObject(param.getPayload().toString());
-                System.out.println(timestamp.toString() + ": " + eventType);
-
-                // If an event gets created, add it to the saved list of events
-                JSONArray events = sharedPreferencesHelper.getEvents();
-                if (eventType.equals("database.documents.create")) {
-                    JSONObject event = new JSONObject();
-                    // Payload is not in the same order, so create a proper new JSON object
-                    try {
-                        event.put("$id", payload.getString("$id"));
-                        event.put("$collection", payload.getString("$collection"));
-                        event.put("$permissions", payload.getString("$permissions"));
-                        event.put("timestamp", payload.getString("timestamp"));
-                        event.put("organizationId", payload.getString("organizationId"));
-                        event.put("$deviceId", payload.getString("deviceId"));
-                        // Add the new event to the array
-                        events.put(event);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    MainActivity.this.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            // Refresh the saved data and the recycler view
-                            sharedPreferencesHelper.setEvents(events);
-                            eventsRecyclerViewAdapter.updateList();
-                            eventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(getApplicationContext(), "Event created", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-                // Otherwise, check which event got modified
-                else {
-                    for (int i = 0; i < sharedPreferencesHelper.getEventsSize(); i++) {
-                        if (payload.getString("$id").equals(events.getJSONObject(i).getString("$id"))) {
-                            // If the event got deleted, remove it from the saved list
-                            if (eventType.equals("database.documents.delete")) {
-                                events.remove(i);
-                                MainActivity.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        // Refresh the saved data and the recycler view
-                                        sharedPreferencesHelper.setEvents(events);
-                                        eventsRecyclerViewAdapter.updateList();
-                                        eventsRecyclerViewAdapter.notifyDataSetChanged();
-                                        Toast.makeText(getApplicationContext(), "Event deleted", Toast.LENGTH_SHORT)
-                                                .show();
-                                    }
-                                });
-                            }
-                            // If it got updated, modify it
-                            else {
-                                JSONObject event = new JSONObject();
-                                // Payload is not in the same order, so create a proper new JSON object
-                                try {
-                                    event.put("$id", payload.getString("$id"));
-                                    event.put("$collection", payload.getString("$collection"));
-                                    event.put("$permissions", payload.getString("$permissions"));
-                                    event.put("timestamp", payload.getString("timestamp"));
-                                    event.put("organizationId", payload.getString("organizationId"));
-                                    event.put("$deviceId", payload.getString("deviceId"));
-                                    // Modify the event in the array
-                                    events.put(i, event);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                                MainActivity.this.runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        // Refresh the saved data and the recycler view
-                                        sharedPreferencesHelper.setEvents(events);
-                                        eventsRecyclerViewAdapter.updateList();
-                                        eventsRecyclerViewAdapter.notifyDataSetChanged();
-                                        Toast.makeText(getApplicationContext(), "Event updated", Toast.LENGTH_SHORT)
-                                                .show();
-                                    }
-                                });
-                            }
-                            break;
-                        }
-                    }
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            return null;
-        });
     }
 }
