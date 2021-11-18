@@ -43,7 +43,7 @@ public class EventsController {
 
     public void getEventsList(EventsRecyclerViewAdapter eventsRecyclerViewAdapter, MainActivity mainActivity, List<Event> events){
         List<String> filters = new ArrayList<String>();
-        filters.add("organizationId=testOrganization");
+        filters.add("organizationId=testOrganization"); // TODO: check the user's organization
         try {
             db.listDocuments(
                     "61871d8957bbc", // Collection ID
@@ -119,8 +119,10 @@ public class EventsController {
                 Date timestamp = new Date(param.getTimestamp());
                 JSONObject payload = new JSONObject(param.getPayload().toString());
                 Event event = new Event(payload);
-                System.out.println(timestamp.toString() + ": " + eventType);
+                // Check if the modification is not for the user's organization, quit the realtime update
+                if(!payload.getString("organizationId").equals("testOrganization")) return null; // TODO: check the user's organization
 
+                System.out.println(timestamp.toString() + ": " + eventType);
                 // If an event gets created, add it to the saved list of events
                 if (eventType.equals("database.documents.create")) {
                     // Payload is not in the same order, so create a proper new JSON object
@@ -133,6 +135,7 @@ public class EventsController {
                         }
                     });
                 }
+                // If it got deleted, remove it from the recycler view's list
                 else if (eventType.equals("database.documents.delete")) {
                     mainActivity.runOnUiThread(new Runnable() {
                         @Override
@@ -143,7 +146,7 @@ public class EventsController {
                         }
                     });
                 }
-                // If it got updated, modify it
+                // If it got updated, modify it in the recycler view's list
                 else {
                     mainActivity.runOnUiThread(new Runnable() {
                         @Override
