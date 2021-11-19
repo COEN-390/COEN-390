@@ -191,6 +191,12 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    protected void goToSavedEventsActivity(String eventId) {
+        Intent intent = new Intent(this, SavedEventsActivity.class);
+        intent.putExtra("eventId", eventId);
+        startActivity(intent);
+    }
+
     private void logout() {
         authenticationController.endSession();
         Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();

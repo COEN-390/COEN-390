@@ -72,11 +72,11 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
                 // TODO: check if user is admin
                 int pos = holder.getLayoutPosition();
 
-                SaveEventDf saveEventDf = new SaveEventDf();
+                EventActionPromptDf eventActionPromptDf = new EventActionPromptDf();
                 Bundle bundle = new Bundle();
                 bundle.putString("event", events.get(pos).toString());
-                saveEventDf.setArguments(bundle);
-                saveEventDf.show(mainActivity.getSupportFragmentManager(), "SaveEventDf");
+                eventActionPromptDf.setArguments(bundle);
+                eventActionPromptDf.show(mainActivity.getSupportFragmentManager(), "EventActionPromptDf");
             }
         }); // MIGHT NEED THIS
     }
@@ -85,6 +85,8 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
     public int getItemCount() {
         return events.size();
     }
+
+
 
     public void addEvent(Event event) {
         events.add(event);

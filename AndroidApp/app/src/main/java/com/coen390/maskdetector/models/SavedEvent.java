@@ -7,7 +7,7 @@ public class SavedEvent {
 
     private String name;
     private Event event;
-    private String eventId;
+    private String eventId; // The original event's ID
 
     public SavedEvent(JSONObject event){
         try {

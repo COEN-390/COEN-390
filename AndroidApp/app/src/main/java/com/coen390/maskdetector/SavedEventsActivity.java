@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import com.coen390.maskdetector.controllers.SavedEventsController;
 import com.coen390.maskdetector.models.Event;
@@ -20,6 +22,7 @@ public class SavedEventsActivity extends AppCompatActivity {
     private ActionBar actionBar;
     private RecyclerView savedEventsRecyclerView;
     private SavedEventsRecyclerViewAdapter savedEventsRecyclerViewAdapter;
+    private int highlightedPosition;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +45,22 @@ public class SavedEventsActivity extends AppCompatActivity {
 
     private void setupRecyclerView(){
         savedEventsRecyclerView = findViewById(R.id.savedEventsRecyclerView);
-        savedEventsRecyclerViewAdapter = new SavedEventsRecyclerViewAdapter(getApplicationContext());
+        Bundle extras = getIntent().getExtras();
+        if(extras != null){
+            String eventId = getIntent().getStringExtra("eventId");
+            savedEventsRecyclerViewAdapter = new SavedEventsRecyclerViewAdapter(getApplicationContext(), this, eventId);
+            savedEventsRecyclerViewAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onItemRangeInserted(int positionStart, int itemCount) {
+                    super.onItemRangeInserted(positionStart, itemCount);
+                    savedEventsRecyclerView.scrollToPosition(4);
+                }
+
+            });
+        }
+        else{
+            savedEventsRecyclerViewAdapter = new SavedEventsRecyclerViewAdapter(getApplicationContext());
+        }
         savedEventsController.getSavedEventsList(savedEventsRecyclerViewAdapter, this, new ArrayList<SavedEvent>());
 
         // Create layout manager and dividers between items of the view holder
@@ -53,5 +71,9 @@ public class SavedEventsActivity extends AppCompatActivity {
         savedEventsRecyclerView.setLayoutManager(linearLayoutManager);
         savedEventsRecyclerView.addItemDecoration(dividerItemDecoration);
         savedEventsRecyclerView.setAdapter(savedEventsRecyclerViewAdapter);
+    }
+
+    public void setHighlightedPosition(int position){
+        this.highlightedPosition = position;
     }
 }

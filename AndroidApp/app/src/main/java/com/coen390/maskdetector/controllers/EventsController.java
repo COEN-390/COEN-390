@@ -155,7 +155,7 @@ public class EventsController {
                         public void run() {
                             eventsRecyclerViewAdapter.modifyEvent(event);
                             eventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(mainActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG).show();
+                            //Toast.makeText(mainActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG).show();
                         }
                     });
                 }

@@ -33,6 +33,12 @@ public class Event {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        // When creating an event from within the SavedEvent constructor
+        try {
+            this.$id = event.getString("eventId");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private class Permissions{

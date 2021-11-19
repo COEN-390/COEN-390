@@ -59,6 +59,10 @@ public class SaveEventDf extends DialogFragment {
                     event.setSaved(true);
                     savedEventsController.createSavedEvent(name, event);
                     eventsController.updateEvent(event);
+                    // Send the event back to the listener
+                    bundle.clear();
+                    bundle.putString("event", event.toString());
+                    getParentFragmentManager().setFragmentResult("saved", bundle);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

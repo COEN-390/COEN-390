@@ -1,9 +1,12 @@
 package com.coen390.maskdetector;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -21,15 +24,19 @@ public class SavedEventsRecyclerViewAdapter extends RecyclerView.Adapter<SavedEv
     private SharedPreferencesHelper sharedPreferencesHelper;
     private List<SavedEvent> events;
     private Context context;
+    private String highlightId;
+    private SavedEventsActivity savedEventsActivity;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView savedEventNameText, savedEventTimestampText, savedEventDeviceText;
+        private FrameLayout frameLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             savedEventNameText = itemView.findViewById(R.id.savedEventNameText);
             savedEventTimestampText = itemView.findViewById(R.id.savedEventTimestampText);
             savedEventDeviceText = itemView.findViewById(R.id.savedEventDeviceText);
+            frameLayout = (FrameLayout) itemView.findViewById(R.id.savedEventLayout);
         }
 
         public TextView getSavedEventNameText() {
@@ -41,12 +48,23 @@ public class SavedEventsRecyclerViewAdapter extends RecyclerView.Adapter<SavedEv
         public TextView getEventDeviceText(){
             return savedEventDeviceText;
         }
+        public FrameLayout getFrameLayout() {
+            return frameLayout;
+        }
 
     }
 
     public SavedEventsRecyclerViewAdapter(Context context) {
         this.context = context;
         this.events = new ArrayList<>();
+        this.highlightId = "";
+    }
+
+    public SavedEventsRecyclerViewAdapter(Context context, SavedEventsActivity savedEventsActivity, String highlightId) {
+        this.context = context;
+        this.events = new ArrayList<>();
+        this.highlightId = highlightId;
+        this.savedEventsActivity = savedEventsActivity;
     }
 
     @NonNull
@@ -61,6 +79,12 @@ public class SavedEventsRecyclerViewAdapter extends RecyclerView.Adapter<SavedEv
         holder.getSavedEventNameText().setText(events.get(position).getName());
         holder.getEventTimestampText().setText((new Date((long)(events.get(position).getEvent().getTimestamp() * 1000))).toString());
         holder.getEventDeviceText().setText("Device: " + events.get(position).getEvent().getDeviceId());
+
+        if(highlightId.equals(events.get(position).getEventId())){
+            holder.getFrameLayout().setBackgroundColor(Color.GREEN);
+            savedEventsActivity.setHighlightedPosition(position);
+        }
+
 
         // Set onClickListener for every item to the same activity
 //        holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -102,5 +126,8 @@ public class SavedEventsRecyclerViewAdapter extends RecyclerView.Adapter<SavedEv
 
     public void setEventsList(List<SavedEvent> eventsList) {
         events = eventsList;
+        for(int i = 0; i < events.size(); i++){
+            notifyItemInserted(i);
+        }
     }
 }
