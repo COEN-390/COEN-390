@@ -23,7 +23,7 @@ import org.json.JSONObject;
 
 public class EventActionPromptDf extends DialogFragment {
 
-    private Button savedEventPromptButton, cancelPromptButton, deleteEventPromptButton, deleteSavedEventPromptButton;
+    private Button savedEventPromptButton, cancelPromptButton, deleteEventPromptButton;
     private EventsController eventsController;
     private SavedEventsController savedEventsController;
     private Event event;
@@ -37,11 +37,12 @@ public class EventActionPromptDf extends DialogFragment {
         savedEventPromptButton = view.findViewById(R.id.buttonSavedEventPrompt);
         cancelPromptButton = view.findViewById(R.id.buttonCancelPrompt);
         deleteEventPromptButton = view.findViewById(R.id.buttonDeleteEventPrompt);
-        deleteSavedEventPromptButton = view.findViewById(R.id.buttonDeleteSavedEventPrompt);
 
         bundle = getArguments();
 
         setupButtons();
+
+        eventsController = new EventsController(((MainActivity) requireActivity()).getApplicationContext());
 
         cancelPromptButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,6 +79,31 @@ public class EventActionPromptDf extends DialogFragment {
             }
         });
 
+        deleteEventPromptButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fragmentManager = getChildFragmentManager();
+                DeleteEventPromptDf deleteEventPromptDf = new DeleteEventPromptDf();
+                Bundle newBundle = new Bundle();
+                if(bundle.getBoolean("savedEvent")) newBundle.putString("message",
+                        "Are you sure you want to delete this event from the saved database?");
+                else newBundle.putString("message", "Are you sure you want to delete this event?");
+                deleteEventPromptDf.setArguments(newBundle);
+                deleteEventPromptDf.show(fragmentManager, "DeleteEventPromptDf");
+                // Set up a listener to be able to know if the event has been saved
+                FragmentResultListener listener = new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        if(requestKey.equals("delete")){
+                            eventsController.deleteEvent(event);
+                            dismiss();
+                        }
+                    }
+                };
+                fragmentManager.setFragmentResultListener("delete", deleteEventPromptDf, listener );
+            }
+        });
+
         return view;
     }
 
@@ -87,12 +113,10 @@ public class EventActionPromptDf extends DialogFragment {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        // If event isn't saved, disable the deletion of saved event
+        // If event isn't saved, change the button text
         if (!event.isSaved()) {
-            deleteSavedEventPromptButton.setEnabled(false);
             savedEventPromptButton.setText("Save event");
         } else {
-            deleteSavedEventPromptButton.setEnabled(true);
             savedEventPromptButton.setText("Go To Saved Event");
         }
     }

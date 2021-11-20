@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -16,6 +17,8 @@ import com.coen390.maskdetector.models.SavedEvent;
 
 import java.util.ArrayList;
 
+import kotlinx.coroutines.Delay;
+
 public class SavedEventsActivity extends AppCompatActivity {
 
     private SavedEventsController savedEventsController;
@@ -23,6 +26,7 @@ public class SavedEventsActivity extends AppCompatActivity {
     private RecyclerView savedEventsRecyclerView;
     private SavedEventsRecyclerViewAdapter savedEventsRecyclerViewAdapter;
     private int highlightedPosition;
+    private Bundle extras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,10 +34,15 @@ public class SavedEventsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_saved_events);
 
         savedEventsController = new SavedEventsController(getApplicationContext());
+        savedEventsController.setupSavedEventsRealtime(getApplicationContext(), savedEventsRecyclerViewAdapter, this);
 
         setupUI();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         setupRecyclerView();
-        savedEventsController.setupSavedEventsRealtime(getApplicationContext(), savedEventsRecyclerViewAdapter, this);
     }
 
     private void setupUI() {
@@ -45,7 +54,7 @@ public class SavedEventsActivity extends AppCompatActivity {
 
     private void setupRecyclerView(){
         savedEventsRecyclerView = findViewById(R.id.savedEventsRecyclerView);
-        Bundle extras = getIntent().getExtras();
+        extras = getIntent().getExtras();
         if(extras != null){
             String eventId = getIntent().getStringExtra("eventId");
             savedEventsRecyclerViewAdapter = new SavedEventsRecyclerViewAdapter(getApplicationContext(), this, eventId);
@@ -53,13 +62,13 @@ public class SavedEventsActivity extends AppCompatActivity {
                 @Override
                 public void onItemRangeInserted(int positionStart, int itemCount) {
                     super.onItemRangeInserted(positionStart, itemCount);
-                    savedEventsRecyclerView.scrollToPosition(4);
+                    savedEventsRecyclerView.scrollToPosition(highlightedPosition);
                 }
 
             });
         }
         else{
-            savedEventsRecyclerViewAdapter = new SavedEventsRecyclerViewAdapter(getApplicationContext());
+            savedEventsRecyclerViewAdapter = new SavedEventsRecyclerViewAdapter(getApplicationContext(), this, "");
         }
         savedEventsController.getSavedEventsList(savedEventsRecyclerViewAdapter, this, new ArrayList<SavedEvent>());
 

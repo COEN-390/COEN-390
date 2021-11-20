@@ -75,6 +75,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
                 EventActionPromptDf eventActionPromptDf = new EventActionPromptDf();
                 Bundle bundle = new Bundle();
                 bundle.putString("event", events.get(pos).toString());
+                bundle.putBoolean("savedEvent", false);
                 eventActionPromptDf.setArguments(bundle);
                 eventActionPromptDf.show(mainActivity.getSupportFragmentManager(), "EventActionPromptDf");
             }

@@ -27,10 +27,6 @@ public class SavedEvent {
         return event;
     }
 
-    public String getEventId() {
-        return eventId;
-    }
-
     public void setName(String name){
         this.name = name;
     }

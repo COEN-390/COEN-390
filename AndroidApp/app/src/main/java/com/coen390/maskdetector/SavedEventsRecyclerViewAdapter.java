@@ -1,5 +1,6 @@
 package com.coen390.maskdetector;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.Layout;
@@ -54,12 +55,6 @@ public class SavedEventsRecyclerViewAdapter extends RecyclerView.Adapter<SavedEv
 
     }
 
-    public SavedEventsRecyclerViewAdapter(Context context) {
-        this.context = context;
-        this.events = new ArrayList<>();
-        this.highlightId = "";
-    }
-
     public SavedEventsRecyclerViewAdapter(Context context, SavedEventsActivity savedEventsActivity, String highlightId) {
         this.context = context;
         this.events = new ArrayList<>();
@@ -80,9 +75,8 @@ public class SavedEventsRecyclerViewAdapter extends RecyclerView.Adapter<SavedEv
         holder.getEventTimestampText().setText((new Date((long)(events.get(position).getEvent().getTimestamp() * 1000))).toString());
         holder.getEventDeviceText().setText("Device: " + events.get(position).getEvent().getDeviceId());
 
-        if(highlightId.equals(events.get(position).getEventId())){
+        if(highlightId.equals(events.get(position).getEvent().get$id())){
             holder.getFrameLayout().setBackgroundColor(Color.GREEN);
-            savedEventsActivity.setHighlightedPosition(position);
         }
 
 
@@ -128,6 +122,9 @@ public class SavedEventsRecyclerViewAdapter extends RecyclerView.Adapter<SavedEv
         events = eventsList;
         for(int i = 0; i < events.size(); i++){
             notifyItemInserted(i);
+            if(events.get(i).getEvent().get$id().equals(highlightId)){
+                savedEventsActivity.setHighlightedPosition(i);
+            }
         }
     }
 }
