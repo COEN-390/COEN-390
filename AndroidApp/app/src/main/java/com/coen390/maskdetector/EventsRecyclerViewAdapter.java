@@ -10,18 +10,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
+import com.coen390.maskdetector.models.Device;
+import com.coen390.maskdetector.models.Event;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecyclerViewAdapter.ViewHolder> {
 
     private SharedPreferencesHelper sharedPreferencesHelper;
-    private JSONArray events;
-    private int size;
+    private List<Event> events;
+    private Context context;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView eventText;
@@ -36,10 +40,9 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
         }
     }
 
-    public EventsRecyclerViewAdapter(Context context, JSONArray events) {
-        this.sharedPreferencesHelper = new SharedPreferencesHelper(context);
-        this.events = events;
-        this.size = sharedPreferencesHelper.getEventsSize();
+    public EventsRecyclerViewAdapter(Context context) {
+        this.context = context;
+        this.events = new ArrayList<>();
     }
 
     @NonNull
@@ -51,13 +54,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        try {
-            JSONObject event = events.getJSONObject(position);
-            Date date = new Date(((long) event.getDouble("timestamp")) * 1000);
-            holder.getItemText().setText(date.toString());
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        holder.getItemText().setText(events.get(position).getTimestamp().toString());
 
         // Set onClickListener for every item to the same activity
 //        holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -74,12 +71,30 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
 
     @Override
     public int getItemCount() {
-        return this.size;
+        return events.size();
     }
 
-    // Used to refresh the data stored so that the notification of changed data set takes the new data
-    public void updateList(){
-        events = sharedPreferencesHelper.getEvents();
-        size = sharedPreferencesHelper.getEventsSize();
+    public void addEvent(Event event) {
+        events.add(event);
+    }
+
+    public void deleteEvent(Event event) {
+        for(int i = 0; i < events.size(); i++){
+            if(event.getId().equals(events.get(i).getId())){
+                events.remove(i);
+            }
+        }
+    }
+
+    public void modifyEvent(Event event) {
+        for(int i = 0; i < events.size(); i++){
+            if(event.getId().equals(events.get(i).getId())){
+                events.set(i, event);
+            }
+        }
+    }
+
+    public void setEventsList(List<Event> eventsList) {
+        events = eventsList;
     }
 }
