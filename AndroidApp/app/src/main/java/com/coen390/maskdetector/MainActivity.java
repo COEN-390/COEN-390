@@ -1,9 +1,5 @@
 package com.coen390.maskdetector;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Intent;
@@ -15,6 +11,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.coen390.maskdetector.controllers.AuthenticationController;
 import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
@@ -31,10 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private Button eventLogButton;
     private Button devicesButton;
     private Button usersButton;
+    private Button savedEventsButton;
 
-    private RecyclerView eventsRecyclerView;
-    private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
-    private EventsController eventsController;
     // Notification channel ID. Put it somewhere better
     private String defaultChannel = "defaultChannel";
 
@@ -65,10 +63,12 @@ public class MainActivity extends AppCompatActivity {
         eventLogButton = findViewById(R.id.eventLogButton);
         devicesButton = findViewById(R.id.devicesButton);
         usersButton = findViewById(R.id.usersButton);
+        savedEventsButton = findViewById(R.id.savedEventsButton);
 
         eventLogButton.setOnClickListener(onClickEventLogButton);
         devicesButton.setOnClickListener(onClickDevicesButton);
         usersButton.setOnClickListener(onClickUsersButton);
+        savedEventsButton.setOnClickListener(onClickSavedEventsActivity);
     }
 
     // Must do at the start before notifications can happen. Maybe put in main
@@ -144,16 +144,10 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     };
 
-    private void goToSavedEventsActivity() {
+    private final Button.OnClickListener onClickSavedEventsActivity = view -> {
         Intent intent = new Intent(this, SavedEventsActivity.class);
         startActivity(intent);
-    }
-
-    protected void goToSavedEventsActivity(String eventId) {
-        Intent intent = new Intent(this, SavedEventsActivity.class);
-        intent.putExtra("eventId", eventId);
-        startActivity(intent);
-    }
+    };
 
     private void logout() {
         authenticationController.endSession();

@@ -10,11 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
 import com.coen390.maskdetector.models.Event;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +20,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
 
     private List<Event> events;
     private Context context;
-    private MainActivity mainActivity;
+    private EventLogActivity mainActivity;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView eventTimestampText, eventDeviceText, eventSavedStateText;
@@ -45,10 +43,10 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
         }
     }
 
-    public EventsRecyclerViewAdapter(Context context, MainActivity mainActivity) {
+    public EventsRecyclerViewAdapter(Context context, EventLogActivity eventLogActivity) {
         this.context = context;
         this.events = new ArrayList<>();
-        this.mainActivity = mainActivity;
+        this.mainActivity = eventLogActivity;
     }
 
     @NonNull
@@ -60,7 +58,6 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.getItemText().setText(events.get(position).getTimestamp().toString());
         holder.getEventTimestampText().setText((new Date((long)(events.get(position).getTimestamp() * 1000))).toString());
         holder.getEventDeviceText().setText("Device: " + events.get(position).getDeviceId());
         if(events.get(position).isSaved()) holder.getEventSavedStateText().setText("Saved");

@@ -1,7 +1,6 @@
 package com.coen390.maskdetector;
 
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,7 +14,6 @@ import androidx.fragment.app.DialogFragment;
 
 import com.coen390.maskdetector.controllers.EventsController;
 import com.coen390.maskdetector.controllers.SavedEventsController;
-import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
 import com.coen390.maskdetector.models.Event;
 
 import org.json.JSONException;
@@ -38,45 +36,37 @@ public class SaveEventDf extends DialogFragment {
         saveEventButton = view.findViewById(R.id.buttonSaveEvent);
         cancelSaveEventButton = view.findViewById(R.id.buttonCancelSaveEvent);
 
-        savedEventsController = new SavedEventsController(((MainActivity) requireActivity()).getApplicationContext());
-        eventsController = new EventsController(((MainActivity) requireActivity()).getApplicationContext());
+        savedEventsController = new SavedEventsController(requireActivity().getApplicationContext());
+        eventsController = new EventsController(requireActivity().getApplicationContext());
 
-        saveEventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // Temporary save text
-                String name = editSaveEventName.getText().toString();
+        saveEventButton.setOnClickListener(view1 -> {
+            // Temporary save text
+            String name = editSaveEventName.getText().toString();
 
-                if(name.equals("")){
-                    Toast.makeText(getContext(), "Invalid name", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                // If name is good, proceed to send it to the database
-                Bundle bundle = getArguments();
-                try {
-                    Event event = new Event(new JSONObject(bundle.getString("event")));
-                    event.setSaved(true);
-                    savedEventsController.createSavedEvent(name, event);
-                    eventsController.updateEvent(event);
-                    // Send the event back to the listener
-                    bundle.clear();
-                    bundle.putString("event", event.toString());
-                    getParentFragmentManager().setFragmentResult("saved", bundle);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Toast.makeText(getContext(), "Event saved", Toast.LENGTH_LONG).show();
-                dismiss();
+            if(name.equals("")){
+                Toast.makeText(getContext(), "Invalid name", Toast.LENGTH_LONG).show();
+                return;
             }
+
+            // If name is good, proceed to send it to the database
+            Bundle bundle = getArguments();
+            try {
+                Event event = new Event(new JSONObject(bundle.getString("event")));
+                event.setSaved(true);
+                savedEventsController.createSavedEvent(name, event);
+                eventsController.updateEvent(event);
+                // Send the event back to the listener
+                bundle.clear();
+                bundle.putString("event", event.toString());
+                getParentFragmentManager().setFragmentResult("saved", bundle);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            Toast.makeText(getContext(), "Event saved", Toast.LENGTH_LONG).show();
+            dismiss();
         });
 
-        cancelSaveEventButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dismiss();
-            }
-        });
+        cancelSaveEventButton.setOnClickListener(view12 -> dismiss());
 
         return view;
     }

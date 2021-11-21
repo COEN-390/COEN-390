@@ -1,6 +1,5 @@
 package com.coen390.maskdetector;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +15,6 @@ import androidx.fragment.app.FragmentResultListener;
 import com.coen390.maskdetector.controllers.EventsController;
 import com.coen390.maskdetector.controllers.SavedEventsController;
 import com.coen390.maskdetector.models.Event;
-import com.google.android.gms.common.util.Hex;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,40 +40,32 @@ public class EventActionPromptDf extends DialogFragment {
 
         setupButtons();
 
-        eventsController = new EventsController(((MainActivity) requireActivity()).getApplicationContext());
+        eventsController = new EventsController(requireActivity().getApplicationContext());
 
-        cancelPromptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        cancelPromptButton.setOnClickListener(v -> dismiss());
+
+        savedEventPromptButton.setOnClickListener(v -> {
+            if(event.isSaved()){
+                // If event is saved, go to saved events and highlight it
+                ((EventLogActivity) requireActivity()).goToSavedEventsActivity(event.get$id());
                 dismiss();
             }
-        });
-
-        savedEventPromptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(event.isSaved()){
-                    // If event is saved, go to saved events and highlight it
-                    ((MainActivity) requireActivity()).goToSavedEventsActivity(event.get$id());
-                    dismiss();
-                }
-                else{
-                    // Start the DF to save the event
-                    FragmentManager fragmentManager = getChildFragmentManager();
-                    SaveEventDf saveEventDf = new SaveEventDf();
-                    saveEventDf.setArguments(bundle);
-                    saveEventDf.show(fragmentManager, "SaveEventDf");
-                    // Set up a listener to be able to know if the event has been saved
-                    FragmentResultListener listener = new FragmentResultListener() {
-                        @Override
-                        public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                            if(requestKey.equals("saved")){
-                                setupButtons();
-                            }
+            else{
+                // Start the DF to save the event
+                FragmentManager fragmentManager = getChildFragmentManager();
+                SaveEventDf saveEventDf = new SaveEventDf();
+                saveEventDf.setArguments(bundle);
+                saveEventDf.show(fragmentManager, "SaveEventDf");
+                // Set up a listener to be able to know if the event has been saved
+                FragmentResultListener listener = new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        if(requestKey.equals("saved")){
+                            setupButtons();
                         }
-                    };
-                    fragmentManager.setFragmentResultListener("saved", saveEventDf, listener );
-                }
+                    }
+                };
+                fragmentManager.setFragmentResultListener("saved", saveEventDf, listener );
             }
         });
 

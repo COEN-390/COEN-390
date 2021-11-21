@@ -1,12 +1,5 @@
 package com.coen390.maskdetector;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +7,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.coen390.maskdetector.controllers.AuthenticationController;
 import com.coen390.maskdetector.controllers.EventsController;
@@ -86,9 +86,15 @@ public class EventLogActivity extends AppCompatActivity {
         Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
     }
 
+    protected void goToSavedEventsActivity(String eventId) {
+        Intent intent = new Intent(this, SavedEventsActivity.class);
+        intent.putExtra("eventId", eventId);
+        startActivity(intent);
+    }
+
     private void setupRecyclerView() {
         eventsRecyclerView = findViewById(R.id.eventsRecyclerView);
-        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(getApplicationContext());
+        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(getApplicationContext(), this);
         eventsController.getEventsList(eventsRecyclerViewAdapter, this, new ArrayList<Event>());
 
         // Create layout manager and dividers between items of the view holder
