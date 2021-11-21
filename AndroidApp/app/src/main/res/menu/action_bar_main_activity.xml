@@ -4,4 +4,13 @@
     <item
         android:id="@+id/logout_menu_item"
         android:title="Logout" />
+    <item
+        android:id="@+id/admin_menu_item"
+        android:title="User Management" />
+    <item
+        android:id="@+id/device_menu_item"
+        android:title="Devices Health" />
+    <item
+        android:id="@+id/saved_events_menu_item"
+        android:title="Saved Events" />
 </menu>

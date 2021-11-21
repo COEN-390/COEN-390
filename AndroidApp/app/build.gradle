@@ -40,6 +40,8 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    // Object to JSON converter
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.8'
 
     //firebase sdk
     implementation platform('com.google.firebase:firebase-bom:28.4.2')

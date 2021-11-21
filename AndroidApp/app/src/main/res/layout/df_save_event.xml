@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="296dp"
+    android:layout_height="192dp"
+    android:layout_gravity="center|center_horizontal">
+
+    <EditText
+        android:id="@+id/editSaveEventName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ -'"
+        android:hint="Name"
+        android:inputType="textPersonName"
+        android:minHeight="48dp" />
+
+    <Button
+        android:id="@+id/buttonSaveEvent"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="164dp"
+        android:layout_marginTop="112dp"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="32dp"
+        android:text="Save" />
+
+    <Button
+        android:id="@+id/buttonCancelSaveEvent"
+        android:layout_width="100dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="112dp"
+        android:text="Cancel" />
+</FrameLayout>

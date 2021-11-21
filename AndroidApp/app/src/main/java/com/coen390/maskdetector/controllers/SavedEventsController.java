@@ -4,18 +4,18 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.coen390.maskdetector.EventLogActivity;
 import com.coen390.maskdetector.EventsRecyclerViewAdapter;
 import com.coen390.maskdetector.MainActivity;
-import com.coen390.maskdetector.models.Device;
+import com.coen390.maskdetector.SavedEventsActivity;
+import com.coen390.maskdetector.SavedEventsRecyclerViewAdapter;
 import com.coen390.maskdetector.models.Event;
+import com.coen390.maskdetector.models.SavedEvent;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Array;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,23 +33,23 @@ import kotlin.coroutines.CoroutineContext;
 import kotlin.coroutines.EmptyCoroutineContext;
 import okhttp3.Response;
 
-public class EventsController {
+public class SavedEventsController {
     private Context context;
     private Client client;
     private Database db;
 
-    public EventsController(Context context) {
+    public SavedEventsController(Context context) {
         this.context = context;
         this.client = AppwriteController.getClient(context);
         this.db = new Database(this.client);
     }
 
-    public void getEventsList(EventsRecyclerViewAdapter eventsRecyclerViewAdapter, EventLogActivity eventLogActivity, List<Event> events){
+    public void getSavedEventsList(SavedEventsRecyclerViewAdapter savedEventsRecyclerViewAdapter, SavedEventsActivity savedEventsActivity, List<SavedEvent> events){
         List<String> filters = new ArrayList<String>();
         filters.add("organizationId=testOrganization"); // TODO: check the user's organization
         try {
             db.listDocuments(
-                    "61871d8957bbc", // Collection ID
+                    "61968895f33a0", // Collection ID
                     filters, // Filters for the search
                     100, // Limit of the number of documents in the payload (cannot go higher than 100)
                     events.size(), // Offset from which to start the search in the DB
@@ -74,19 +74,19 @@ public class EventsController {
                                     JSONArray documentList = payload.getJSONArray("documents");
                                     // Initialize the list of devices from JSON
                                     for (int i = 0; i < documentList.length(); i ++) {
-                                        Event newEvent = new Event(documentList.getJSONObject(i));
+                                        SavedEvent newEvent = new SavedEvent(documentList.getJSONObject(i));
                                         events.add(newEvent);
                                     }
                                     // If not all the events in the DB have been filtered, recursively search again
                                     // ("sum" value is dependant on filters, no need to go through all the documents in the entire server)
                                     if(events.size() < payload.getInt("sum")){
-                                        getEventsList(eventsRecyclerViewAdapter, eventLogActivity, events);
+                                        getSavedEventsList(savedEventsRecyclerViewAdapter, savedEventsActivity, events);
                                     }
-                                    eventLogActivity.runOnUiThread(new Runnable() {
+                                    savedEventsActivity.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            eventsRecyclerViewAdapter.setEventsList(events);
-                                            eventsRecyclerViewAdapter.notifyDataSetChanged();
+                                            savedEventsRecyclerViewAdapter.setEventsList(events);
+                                            savedEventsRecyclerViewAdapter.notifyDataSetChanged();
                                         }
                                     });
                                 }
@@ -110,10 +110,10 @@ public class EventsController {
     }
 
 
-    public void setupEventsRealtime(Context context, EventsRecyclerViewAdapter eventsRecyclerViewAdapter, EventLogActivity eventLogActivity) {
+    public void setupSavedEventsRealtime(Context context, SavedEventsRecyclerViewAdapter savedEventsRecyclerViewAdapter, SavedEventsActivity savedEventsActivity) {
         // Create the connection to the Appwrite server's realtime functionality
-        Realtime eventsListener = new Realtime(AppwriteController.getClient(context));
-        eventsListener.subscribe(new String[] { "collections.61871d8957bbc.documents" }, (param) -> {
+        Realtime savedEventsListener = new Realtime(AppwriteController.getClient(context));
+        savedEventsListener.subscribe(new String[] { "collections.61968895f33a0.documents" }, (param) -> {
             // Implement the lambda function that will run every time there is a change in
             // the events
             try {
@@ -121,7 +121,7 @@ public class EventsController {
                 String eventType = param.getEvent();
                 Date timestamp = new Date(param.getTimestamp());
                 JSONObject payload = new JSONObject(param.getPayload().toString());
-                Event event = new Event(payload);
+                SavedEvent event = new SavedEvent(payload);
                 // Check if the modification is not for the user's organization, quit the realtime update
                 if(!payload.getString("organizationId").equals("testOrganization")) return null; // TODO: check the user's organization
 
@@ -129,35 +129,34 @@ public class EventsController {
                 // If an event gets created, add it to the saved list of events
                 if (eventType.equals("database.documents.create")) {
                     // Payload is not in the same order, so create a proper new JSON object
-                    eventLogActivity.runOnUiThread(new Runnable() {
+                    savedEventsActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            eventsRecyclerViewAdapter.addEvent(event);
-                            eventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(eventLogActivity.getApplicationContext(), "New Alert!", Toast.LENGTH_LONG).show();
+                            savedEventsRecyclerViewAdapter.addEvent(event);
+                            savedEventsRecyclerViewAdapter.notifyDataSetChanged();
+                            Toast.makeText(savedEventsActivity.getApplicationContext(), "New Alert!", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
                 // If it got deleted, remove it from the recycler view's list
                 else if (eventType.equals("database.documents.delete")) {
-                    eventLogActivity.runOnUiThread(new Runnable() {
+                    savedEventsActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            eventsRecyclerViewAdapter.deleteEvent(event);
-                            eventsRecyclerViewAdapter.notifyDataSetChanged();
+                            savedEventsRecyclerViewAdapter.deleteEvent(event);
+                            savedEventsRecyclerViewAdapter.notifyDataSetChanged();
                             Toast.makeText(context, "Alert deleted", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
                 // If it got updated, modify it in the recycler view's list
                 else {
-                    eventLogActivity.runOnUiThread(new Runnable() {
+                    savedEventsActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            eventsRecyclerViewAdapter.modifyEvent(event);
-                            eventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(eventLogActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG).show();
-                            //Toast.makeText(mainActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG).show();
+                            savedEventsRecyclerViewAdapter.modifyEvent(event);
+                            savedEventsRecyclerViewAdapter.notifyDataSetChanged();
+                            Toast.makeText(savedEventsActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -168,19 +167,26 @@ public class EventsController {
         });
     }
 
-    public void updateEvent(Event event){
+    public void createSavedEvent(String name, Event event){
         // Create the map of values
         Map<String, Object> values = new HashMap<>();
+        values.put("name", name);
         values.put("timestamp", event.getTimestamp());
         values.put("organizationId", event.getOrganizationId());
         values.put("deviceId", event.getDeviceId());
-        values.put("saved", event.isSaved());
+        values.put("eventId", event.get$id());
 
+        // Create the permissions (write so that the admin can change the event's name)
+        List<String> read = new ArrayList<String>();
+        List<String> write = new ArrayList<String>();
+        read.add("*");
+        write.add("*");
         try {
-            db.updateDocument(
-                    "61871d8957bbc",
-                    event.get$id(),
-                    values,
+            db.createDocument(
+                    "61968895f33a0",
+                     values,
+                    read,
+                    write,
                     new Continuation<Object>() {
                         @NotNull
                         @Override
@@ -204,40 +210,6 @@ public class EventsController {
                             }
                         }
                     }
-            );
-        } catch (AppwriteException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void deleteEvent(Event event){
-        try {
-            db.deleteDocument(
-                    "61871d8957bbc",
-                    event.get$id(),
-                new Continuation<Object>() {
-                    @NotNull
-                    @Override
-                    public CoroutineContext getContext() {
-                        return EmptyCoroutineContext.INSTANCE;
-                    }
-
-                    @Override
-                    public void resumeWith(@NotNull Object o) {
-                        String json = "";
-                        try {
-                            if (o instanceof Result.Failure) {
-                                Result.Failure failure = (Result.Failure) o;
-                                throw failure.exception;
-                            } else {
-                                Response response = (Response) o;
-                                json = response.body().string();
-                            }
-                        } catch (Throwable th) {
-                            Log.e("ERROR", th.toString());
-                        }
-                    }
-                }
             );
         } catch (AppwriteException e) {
             e.printStackTrace();

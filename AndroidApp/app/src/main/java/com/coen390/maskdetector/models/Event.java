@@ -1,62 +1,115 @@
 package com.coen390.maskdetector.models;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Permission;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Event {
-    private String id;
-    private String collection;
-    private ArrayList<String> readPermissions;
-    private ArrayList<String> writePermissions;
-    private Date timestamp;
+    private String $id;
+    private String $collection;
+    private Permissions $permissions;
+    private Double timestamp;
     private String organizationId;
     private String deviceId;
+    private boolean saved;
 
     public Event(JSONObject event){
         try {
-            this.id = event.getString("$id");
-            this.collection = event.getString("$collection");
-            JSONArray ReadPermissions = event.getJSONObject("$permissions").getJSONArray("read");
-            this.readPermissions = new ArrayList<String>();
-            for(int i = 0; i < ReadPermissions.length(); i++){
-                this.readPermissions.add(ReadPermissions.getString(i));
-            }
-            JSONArray WritePermissions = event.getJSONObject("$permissions").getJSONArray("write");
-            this.writePermissions = new ArrayList<String>();
-            for(int i = 0; i < WritePermissions.length(); i++){
-                this.writePermissions.add(WritePermissions.getString(i));
-            }
-            this.timestamp = new Date(((long) event.getDouble("timestamp")) * 1000);
+            this.$id = event.getString("$id");
+            this.$collection = event.getString("$collection");
+            this.$permissions = new Permissions(event.getJSONObject("$permissions"));
+            this.timestamp = event.getDouble("timestamp");
             this.organizationId = event.getString("organizationId");
             this.deviceId = event.getString("deviceId");
+            this.saved = event.getBoolean("saved");
 
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        // When creating an event from within the SavedEvent constructor
+        try {
+            this.$id = event.getString("eventId");
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    private class Permissions{
+        private ArrayList<String> read;
+        private ArrayList<String> write;
+
+        public Permissions(JSONObject permissions){
+            try {
+                JSONArray readPermissions = permissions.getJSONArray("read");
+                this.read = new ArrayList<String>();
+                for(int i = 0; i < readPermissions.length(); i++){
+                    this.read.add(readPermissions.getString(i));
+                }
+                JSONArray writePermissions = permissions.getJSONArray("write");
+                this.write = new ArrayList<String>();
+                for(int i = 0; i < writePermissions.length(); i++){
+                    this.write.add(writePermissions.getString(i));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        // Getter methods
+
+        public ArrayList<String> getRead() {
+            return read;
+        }
+
+        public ArrayList<String> getWrite() {
+            return write;
+        }
+
+        // Setter methods
+
+
+        public void setRead(ArrayList<String> read) {
+            this.read = read;
+        }
+
+        public void setWrite(ArrayList<String> write) {
+            this.write = write;
+        }
+    }
+
+    public String toString() {
+        String json = "";
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            json = mapper.writeValueAsString(this);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return json;
+    }
+
     // Getter Methods
 
-    public String getId() {
-        return id;
+    public String get$id() {
+        return $id;
     }
 
-    public String getCollection() {
-        return collection;
+    public String get$collection() {
+        return $collection;
     }
 
-    public ArrayList<String> getReadPermissions() {
-        return readPermissions;
-    }
-    public ArrayList<String> getWritePermissions() {
-        return writePermissions;
+    public Permissions get$permissions() {
+        return $permissions;
     }
 
-    public Date getTimestamp() {
+    public Double getTimestamp() {
         return timestamp;
     }
 
@@ -68,25 +121,21 @@ public class Event {
         return deviceId;
     }
 
+    public boolean isSaved() {
+        return saved;
+    }
+
     // Setter Methods
 
-    public void setId(String id) {
-        this.id = id;
+    public void set$id(String id) {
+        this.$id = id;
     }
 
-    public void setCollection(String collection) {
-        this.collection = collection;
+    public void set$collection(String collection) {
+        this.$collection = collection;
     }
 
-    public void setReadPermissions(ArrayList<String> readPermissions) {
-        this.readPermissions = readPermissions;
-    }
-
-    public void setWritePermissions(ArrayList<String> writePermissions) {
-        this.writePermissions = writePermissions;
-    }
-
-    public void setTimestamp(Date timestamp) {
+    public void setTimestamp(Double timestamp) {
         this.timestamp = timestamp;
     }
 
@@ -96,5 +145,9 @@ public class Event {
 
     public void setDeviceId(String deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public void setSaved(boolean saved) {
+        this.saved = saved;
     }
 }

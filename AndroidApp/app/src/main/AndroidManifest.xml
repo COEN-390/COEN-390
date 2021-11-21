@@ -19,6 +19,14 @@
                 android:value="com.coen390.maskdetector.MainActivity" />
         </activity>
         <activity
+            android:name=".SavedEventsActivity"
+            android:exported="true"
+            android:label="Saved Events">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.coen390.maskdetector.MainActivity" />
+        </activity>
+        <activity
             android:name=".DevicesActivity"
             android:exported="true"
             android:label="Devices Health">

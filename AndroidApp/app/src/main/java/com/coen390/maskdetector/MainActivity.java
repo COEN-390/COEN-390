@@ -32,6 +32,9 @@ public class MainActivity extends AppCompatActivity {
     private Button devicesButton;
     private Button usersButton;
 
+    private RecyclerView eventsRecyclerView;
+    private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
+    private EventsController eventsController;
     // Notification channel ID. Put it somewhere better
     private String defaultChannel = "defaultChannel";
 
@@ -97,6 +100,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+//        if(/* TODO: user isn't admin */) {
+//            menu.findItem(R.id.admin_menu_item).setVisible(false);
+//            menu.findItem(R.id.saved_events_menu_item).setVisible(false);
+//        }
+//        else{
+//            menu.findItem(R.id.admin_menu_item).setVisible(true);
+//            menu.findItem(R.id.saved_events_menu_item).setVisible(true);
+//        }
+
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
         case R.id.logout_menu_item:
@@ -126,6 +143,17 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, UsersActivity.class);
         startActivity(intent);
     };
+
+    private void goToSavedEventsActivity() {
+        Intent intent = new Intent(this, SavedEventsActivity.class);
+        startActivity(intent);
+    }
+
+    protected void goToSavedEventsActivity(String eventId) {
+        Intent intent = new Intent(this, SavedEventsActivity.class);
+        intent.putExtra("eventId", eventId);
+        startActivity(intent);
+    }
 
     private void logout() {
         authenticationController.endSession();
