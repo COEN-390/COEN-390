@@ -76,11 +76,12 @@ public class DevicesRecyclerViewAdapter extends RecyclerView.Adapter<DevicesRecy
 
         // Get element from your dataset at this position and replace the
         // contents of the view with that element
-        viewHolder.getDeviceIdTextView().setText("Device ID: " + devices.get(position).getDeviceId());
+        viewHolder.getDeviceIdTextView().setText(devices.get(position).getDeviceId());
         long timestamp = System.currentTimeMillis() / 1000;
         double healthTimestamp = devices.get(position).getHealthCheckTimestamp();
         boolean healthy = (timestamp - healthTimestamp) < 240;
-        viewHolder.getDeviceHealthTextView().setText("Device Health: " + (healthy ? "ONLINE" : "OFFLINE"));
+        viewHolder.getDeviceHealthTextView().setText(healthy ? "ONLINE" : "OFFLINE");
+        viewHolder.getDeviceHealthTextView().setTextColor(healthy ? 0xff00ff00 : 0xffff0000);
     }
 
     // Return the size of your dataset (invoked by the layout manager)

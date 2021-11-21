@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AndroidApp">
         <activity
+            android:name=".EventLogActivity"
+            android:exported="true"
+            android:label="Event Log"
+            >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.coen390.maskdetector.MainActivity" />
+        </activity>
+        <activity
             android:name=".DevicesActivity"
             android:exported="true"
             android:label="Devices Health">
@@ -43,7 +52,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="Alerts">
+            android:label="Mask Detection Alerts">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

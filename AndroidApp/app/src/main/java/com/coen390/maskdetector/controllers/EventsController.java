@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.coen390.maskdetector.EventLogActivity;
 import com.coen390.maskdetector.EventsRecyclerViewAdapter;
 import com.coen390.maskdetector.MainActivity;
 import com.coen390.maskdetector.models.Device;
@@ -41,7 +42,7 @@ public class EventsController {
         this.db = new Database(this.client);
     }
 
-    public void getEventsList(EventsRecyclerViewAdapter eventsRecyclerViewAdapter, MainActivity mainActivity, List<Event> events){
+    public void getEventsList(EventsRecyclerViewAdapter eventsRecyclerViewAdapter, EventLogActivity eventLogActivity, List<Event> events){
         List<String> filters = new ArrayList<String>();
         filters.add("organizationId=testOrganization"); // TODO: check the user's organization
         try {
@@ -77,9 +78,9 @@ public class EventsController {
                                     // If not all the events in the DB have been filtered, recursively search again
                                     // ("sum" value is dependant on filters, no need to go through all the documents in the entire server)
                                     if(events.size() < payload.getInt("sum")){
-                                        getEventsList(eventsRecyclerViewAdapter, mainActivity, events);
+                                        getEventsList(eventsRecyclerViewAdapter, eventLogActivity, events);
                                     }
-                                    mainActivity.runOnUiThread(new Runnable() {
+                                    eventLogActivity.runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
                                             eventsRecyclerViewAdapter.setEventsList(events);
@@ -107,7 +108,7 @@ public class EventsController {
     }
 
 
-    public void setupEventsRealtime(Context context, EventsRecyclerViewAdapter eventsRecyclerViewAdapter, MainActivity mainActivity) {
+    public void setupEventsRealtime(Context context, EventsRecyclerViewAdapter eventsRecyclerViewAdapter, EventLogActivity eventLogActivity) {
         // Create the connection to the Appwrite server's realtime functionality
         Realtime eventsListener = new Realtime(AppwriteController.getClient(context));
         eventsListener.subscribe(new String[] { "collections.61871d8957bbc.documents" }, (param) -> {
@@ -126,18 +127,18 @@ public class EventsController {
                 // If an event gets created, add it to the saved list of events
                 if (eventType.equals("database.documents.create")) {
                     // Payload is not in the same order, so create a proper new JSON object
-                    mainActivity.runOnUiThread(new Runnable() {
+                    eventLogActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             eventsRecyclerViewAdapter.addEvent(event);
                             eventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(mainActivity.getApplicationContext(), "New Alert!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(eventLogActivity.getApplicationContext(), "New Alert!", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
                 // If it got deleted, remove it from the recycler view's list
                 else if (eventType.equals("database.documents.delete")) {
-                    mainActivity.runOnUiThread(new Runnable() {
+                    eventLogActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             eventsRecyclerViewAdapter.deleteEvent(event);
@@ -148,12 +149,12 @@ public class EventsController {
                 }
                 // If it got updated, modify it in the recycler view's list
                 else {
-                    mainActivity.runOnUiThread(new Runnable() {
+                    eventLogActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             eventsRecyclerViewAdapter.modifyEvent(event);
                             eventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(mainActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG).show();
+                            Toast.makeText(eventLogActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG).show();
                         }
                     });
                 }
