@@ -95,6 +95,8 @@ public class EventLogActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(eventsRecyclerView.getContext(),
                 linearLayoutManager.getOrientation());
+        linearLayoutManager.setReverseLayout(true);
+        linearLayoutManager.setStackFromEnd(true);
 
         eventsRecyclerView.setLayoutManager(linearLayoutManager);
         eventsRecyclerView.addItemDecoration(dividerItemDecoration);

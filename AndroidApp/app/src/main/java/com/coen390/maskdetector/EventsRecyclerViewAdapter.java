@@ -18,12 +18,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecyclerViewAdapter.ViewHolder> {
 
-    private SharedPreferencesHelper sharedPreferencesHelper;
     private List<Event> events;
     private Context context;
 
@@ -55,18 +55,6 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         holder.getItemText().setText(events.get(position).getTimestamp().toString());
-
-        // Set onClickListener for every item to the same activity
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                int pos = holder.getLayoutPosition();
-//
-//                Intent intent = new Intent(view.getContext(), ProfileActivity.class);
-//                intent.putExtra("studentId", sortedProfiles.get(pos).getStudentId());
-//                view.getContext().startActivity(intent);
-//            }
-//        }); // MIGHT NEED THIS
     }
 
     @Override
