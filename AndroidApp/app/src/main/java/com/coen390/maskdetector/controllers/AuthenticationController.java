@@ -7,9 +7,12 @@ import android.widget.Toast;
 
 import com.coen390.maskdetector.LoginActivity;
 import com.coen390.maskdetector.MainActivity;
+
 import androidx.annotation.NonNull;
+import androidx.navigation.NavController;
 
 import com.coen390.maskdetector.PushNotificationService;
+import com.coen390.maskdetector.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -36,10 +39,12 @@ public class AuthenticationController {
     private Database db;
     private SharedPreferencesHelper sharedPreferencesHelper;
     private static final String TAG = "AuthenticationController";
+    private NavController navController;
 
     public AuthenticationController(Context context) {
         this.context = context;
         sharedPreferencesHelper = new SharedPreferencesHelper(context);
+        this.navController = navController;
 
         // Initialize Appwrite SDK
         this.client = AppwriteController.getClient(context);
@@ -64,11 +69,8 @@ public class AuthenticationController {
                         Result.Failure failure = (Result.Failure) o;
                         throw failure.exception;
                     } else {
-                        getAccount();
+                        storeAccount();
                         subscribeToken();
-                        Intent intent = new Intent(context, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(intent);
                     }
                 } catch (AppwriteException e) {
                     System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
@@ -122,7 +124,7 @@ public class AuthenticationController {
         }
     }
 
-    private void getAccount() {
+    private void storeAccount() {
         try {
             account.get(new Continuation<Object>() {
                 @NotNull
@@ -142,6 +144,9 @@ public class AuthenticationController {
                             Response response = (Response) o;
                             json = response.body().string();
                             sharedPreferencesHelper.setUser(json);
+                            Intent intent = new Intent(context, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            context.startActivity(intent);
                         }
                     } catch (AppwriteException e) {
                         System.out.println("storeUsername() " + new Timestamp(System.currentTimeMillis()));

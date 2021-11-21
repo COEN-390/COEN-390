@@ -1,82 +1,85 @@
 package com.coen390.maskdetector;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
+import android.view.Menu;
 
-import com.coen390.maskdetector.controllers.AppwriteController;
-import com.coen390.maskdetector.controllers.AuthenticationController;
-import com.coen390.maskdetector.controllers.EventsController;
 import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
-import com.coen390.maskdetector.models.Event;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.navigation.NavigationView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
-import java.util.Date;
-
-import io.appwrite.services.Realtime;
+import com.coen390.maskdetector.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String TAG = "MainActivity";
-
+    private AppBarConfiguration mAppBarConfiguration;
+    private ActivityMainBinding binding;
     private SharedPreferencesHelper sharedPreferencesHelper;
-    private AuthenticationController authenticationController;
-    private ActionBar actionBar;
-    private MenuInflater menuInflater;
-    private Button testButton;
-    private RecyclerView eventsRecyclerView;
-    private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
-    private EventsController eventsController;
     // Notification channel ID. Put it somewhere better
     private String defaultChannel = "defaultChannel";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Log.d(TAG, "onCreate Called!");
-
-        Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
-        startService(intentBackgroundService);
-
         sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
-        authenticationController = new AuthenticationController(getApplicationContext());
-        eventsController = new EventsController(getApplicationContext());
-        // if(!sharedPreferencesHelper.userIsEmpty()) {
-        // Intent intentBackgroundService = new Intent(this,
-        // PushNotificationService.class);
-        // startService(intentBackgroundService);
-        // }
-        // String token = PushNotificationService.getToken(this);
-        // Log.d(TAG, "Token Received: " + token);
 
+        // Check if user is logged in, if not redirect to login page
+        if (sharedPreferencesHelper.userIsEmpty())
+            goToLoginActivity();
         createNotificationChannel();
         setupUI();
-        setupRecyclerView();
-        eventsController.setupEventsRealtime(getApplicationContext(), eventsRecyclerViewAdapter, this);
+    }
+
+    private void setupUI() {
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.appBarMain.toolbar);
+        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG).setAction("Action", null)
+                        .show();
+            }
+        });
+        DrawerLayout drawer = binding.drawerLayout;
+        NavigationView navigationView = binding.navView;
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        mAppBarConfiguration = new AppBarConfiguration.Builder(R.id.nav_home, R.id.nav_event_log,
+                R.id.nav_logout).setOpenableLayout(drawer).build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration) || super.onSupportNavigateUp();
+    }
+
+    private void goToLoginActivity() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 
     // Must do at the start before notifications can happen. Maybe put in main
@@ -99,103 +102,4 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.action_bar_main_activity, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-        case R.id.logout_menu_item:
-            logout();
-            break;
-        case R.id.admin_menu_item:
-            goToAdminActivity();
-            break;
-            case R.id.device_menu_item:
-            goToDevicesActivity();
-            break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void setupUI() {
-        actionBar = getSupportActionBar();
-
-        actionBar.show();
-        actionBar.setHomeButtonEnabled(false);
-
-        testButton = findViewById(R.id.testButton);
-
-        testButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                notification();
-            }
-        });
-
-        if (sharedPreferencesHelper.userIsEmpty())
-            goToLoginActivity();
-
-    }
-
-    private void notification() {
-
-        // Set the intent you want for when you click on the notification
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, 0);
-
-        // build the notification
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, defaultChannel)
-                .setSmallIcon(R.drawable.ic_launcher_background).setContentTitle("Test Notification")
-                .setContentText("This is a test :)").setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setContentIntent(pendingIntent);
-
-        // Actually display the notification
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(420, builder.build()); // Different ID needed for separate cameras? or else can only
-                                                          // have one notification for all cameras
-
-    }
-
-    private void goToLoginActivity() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
-
-    private void goToAdminActivity() {
-        Intent intent = new Intent(this, UsersActivity.class);
-        startActivity(intent);
-    }
-
-    private void goToDevicesActivity() {
-        Intent intent = new Intent(this, DevicesActivity.class);
-        startActivity(intent);
-    }
-
-    private void logout() {
-        authenticationController.endSession();
-        Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
-    }
-
-    private void setupRecyclerView() {
-        eventsRecyclerView = findViewById(R.id.eventsRecyclerView);
-        eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(getApplicationContext());
-        eventsController.getEventsList(eventsRecyclerViewAdapter, this, new ArrayList<Event>());
-
-        // Create layout manager and dividers between items of the view holder
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(eventsRecyclerView.getContext(),
-                linearLayoutManager.getOrientation());
-
-        eventsRecyclerView.setLayoutManager(linearLayoutManager);
-        eventsRecyclerView.addItemDecoration(dividerItemDecoration);
-        eventsRecyclerView.setAdapter(eventsRecyclerViewAdapter);
-    }
 }

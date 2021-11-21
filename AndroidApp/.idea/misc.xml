@@ -14,10 +14,22 @@
         <entry key="..\:/Github/COEN-390/COEN-390/AndroidApp/app/src/main/res/layout/users_item.xml" value="0.2328125" />
         <entry key="..\:/Github/COEN-390/COEN-390/AndroidApp/app/src/main/res/menu/action_bar_main_activity.xml" value="0.2328125" />
         <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/activity_devices.xml" value="0.36666666666666664" />
+        <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/activity_login.xml" value="0.36666666666666664" />
         <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/activity_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/activity_oldmain.xml" value="0.36666666666666664" />
+        <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/app_bar_main.xml" value="0.36666666666666664" />
+        <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/content_main.xml" value="0.36666666666666664" />
         <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/devices_item.xml" value="0.36666666666666664" />
+        <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/event_log_fragment.xml" value="0.35260416666666666" />
         <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/events_item.xml" value="0.36666666666666664" />
+        <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/fragment_gallery.xml" value="0.36666666666666664" />
+        <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/fragment_home.xml" value="0.36666666666666664" />
+        <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/fragment_slideshow.xml" value="0.36666666666666664" />
+        <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/login_fragment.xml" value="0.35260416666666666" />
+        <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/logout_fragment.xml" value="0.36666666666666664" />
         <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/menu/action_bar_main_activity.xml" value="0.36666666666666664" />
+        <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/menu/activity_home_drawer.xml" value="0.36666666666666664" />
+        <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/menu/main.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/layout/activity_login.xml" value="0.2957427536231884" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.27717391304347827" />
       </map>

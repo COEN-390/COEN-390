@@ -2,18 +2,15 @@ package com.coen390.maskdetector.controllers;
 
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.coen390.maskdetector.DevicesActivity;
 import com.coen390.maskdetector.DevicesRecyclerViewAdapter;
-import com.coen390.maskdetector.MainActivity;
 import com.coen390.maskdetector.models.Device;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
