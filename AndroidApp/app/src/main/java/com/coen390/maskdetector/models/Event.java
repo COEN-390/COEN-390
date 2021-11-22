@@ -17,6 +17,7 @@ public class Event {
     private String organizationId;
     private String deviceId;
     private boolean saved;
+    private String fileId;
 
     public Event(JSONObject event){
         try {
@@ -27,15 +28,14 @@ public class Event {
             this.organizationId = event.getString("organizationId");
             this.deviceId = event.getString("deviceId");
             this.saved = event.getBoolean("saved");
-
+            this.fileId = event.getString("fileId");
         } catch (JSONException e) {
             e.printStackTrace();
         }
         // When creating an event from within the SavedEvent constructor
         try {
             this.$id = event.getString("eventId");
-        } catch (JSONException e) {
-            e.printStackTrace();
+        } catch (JSONException ignored) {
         }
     }
 
@@ -122,6 +122,10 @@ public class Event {
         return saved;
     }
 
+    public String getFileId() {
+        return fileId;
+    }
+
     // Setter Methods
 
     public void set$id(String id) {
@@ -146,5 +150,9 @@ public class Event {
 
     public void setSaved(boolean saved) {
         this.saved = saved;
+    }
+
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
     }
 }

@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentResultListener;
 
 import com.coen390.maskdetector.controllers.EventsController;
 import com.coen390.maskdetector.controllers.SavedEventsController;
+import com.coen390.maskdetector.controllers.VideoClipController;
 import com.coen390.maskdetector.models.Event;
 import com.coen390.maskdetector.models.SavedEvent;
 
@@ -22,9 +23,10 @@ import org.json.JSONObject;
 
 public class EventActionPromptDf extends DialogFragment {
 
-    private Button savedEventPromptButton, cancelPromptButton, deleteEventPromptButton;
+    private Button savedEventPromptButton, cancelPromptButton, deleteEventPromptButton, saveVideoButton;
     private EventsController eventsController;
     private SavedEventsController savedEventsController;
+    private VideoClipController videoClipController;
     private Event event;
     private SavedEvent savedEvent;
     private Bundle bundle;
@@ -37,6 +39,7 @@ public class EventActionPromptDf extends DialogFragment {
         savedEventPromptButton = view.findViewById(R.id.buttonSavedEventPrompt);
         cancelPromptButton = view.findViewById(R.id.buttonCancelPrompt);
         deleteEventPromptButton = view.findViewById(R.id.buttonDeleteEventPrompt);
+        saveVideoButton = view.findViewById(R.id.buttonVideoView);
 
         bundle = getArguments();
 
@@ -44,6 +47,7 @@ public class EventActionPromptDf extends DialogFragment {
 
         eventsController = new EventsController(requireActivity().getApplicationContext());
         savedEventsController = new SavedEventsController(requireActivity().getApplicationContext());
+        videoClipController = new VideoClipController(requireActivity().getApplicationContext());
 
         cancelPromptButton.setOnClickListener(v -> dismiss());
 
@@ -73,31 +77,33 @@ public class EventActionPromptDf extends DialogFragment {
             fragmentManager.setFragmentResultListener("saved", saveEventDf, listener);
         });
 
-        deleteEventPromptButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FragmentManager fragmentManager = getChildFragmentManager();
-                DeleteEventPromptDf deleteEventPromptDf = new DeleteEventPromptDf();
-                Bundle newBundle = new Bundle();
-                newBundle.putAll(bundle);
-                if(bundle.getBoolean("savedEvent")) newBundle.putString("message",
-                        "Are you sure you want to delete this event from the saved database?");
-                else newBundle.putString("message", "Are you sure you want to delete this event?");
-                deleteEventPromptDf.setArguments(newBundle);
-                deleteEventPromptDf.show(fragmentManager, "DeleteEventPromptDf");
-                // Set up a listener to be able to know if the event has been saved
-                FragmentResultListener listener = new FragmentResultListener() {
-                    @Override
-                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
-                        if(requestKey.equals("delete")){
-                            if(bundle.getBoolean("savedEvent")) savedEventsController.deleteSavedEvent(savedEvent);
-                            else eventsController.deleteEvent(event);
-                            dismiss();
-                        }
+        deleteEventPromptButton.setOnClickListener(v -> {
+            FragmentManager fragmentManager = getChildFragmentManager();
+            DeleteEventPromptDf deleteEventPromptDf = new DeleteEventPromptDf();
+            Bundle newBundle = new Bundle();
+            newBundle.putAll(bundle);
+            if(bundle.getBoolean("savedEvent")) newBundle.putString("message",
+                    "Are you sure you want to delete this event from the saved database?");
+            else newBundle.putString("message", "Are you sure you want to delete this event?");
+            deleteEventPromptDf.setArguments(newBundle);
+            deleteEventPromptDf.show(fragmentManager, "DeleteEventPromptDf");
+            // Set up a listener to be able to know if the event has been saved
+            FragmentResultListener listener = new FragmentResultListener() {
+                @Override
+                public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                    if(requestKey.equals("delete")){
+                        if(bundle.getBoolean("savedEvent")) savedEventsController.deleteSavedEvent(savedEvent);
+                        else eventsController.deleteEvent(event);
+                        dismiss();
                     }
-                };
-                fragmentManager.setFragmentResultListener("delete", deleteEventPromptDf, listener );
-            }
+                }
+            };
+            fragmentManager.setFragmentResultListener("delete", deleteEventPromptDf, listener );
+        });
+
+        saveVideoButton.setOnClickListener(v -> {
+            System.out.println(bundle.getString("fileId"));
+            videoClipController.downloadFile(bundle.getString("fileId"), event.get$id());
         });
 
         return view;
