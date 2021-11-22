@@ -98,38 +98,37 @@ public class VideoClipController {
 
     private void saveData(byte[] data, String fileName){
 
-        File root = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
 
-        root = new File(root, "MaskDetector");
-        root.mkdir();
-        root = new File(root , fileName);
+        file = new File(file, "MaskDetector");
+        file.mkdir();
+        file = new File(file , fileName);
 
         try {
-            FileOutputStream fileOutput = new FileOutputStream(root);
+            FileOutputStream fileOutput = new FileOutputStream(file);
             fileOutput.write(data);
             fileOutput.close();
-
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            boolean bool = false;
+            boolean success = false;
             try {
-                // try to create the file
-                bool = root.createNewFile();
+                // try creating a file
+                success = file.createNewFile();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
-
-            if (bool){
-                // call the method again
+            if (success){
+                // try saving again
                 saveData(data, fileName);
-            }else {
-                throw new IllegalStateException("Failed to create image file");
+            } else {
+                throw new IllegalStateException("Failed to save video");
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        openFile(root);
+        // open the video in the media player
+        openFile(file);
     }
 
     public void openFile(File file) {
