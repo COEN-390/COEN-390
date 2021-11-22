@@ -74,6 +74,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
                 Bundle bundle = new Bundle();
                 bundle.putString("event", events.get(pos).toString());
                 bundle.putBoolean("savedEvent", false);
+                bundle.putString("fileId", events.get(pos).getFileId());
                 eventActionPromptDf.setArguments(bundle);
                 eventActionPromptDf.show(mainActivity.getSupportFragmentManager(), "EventActionPromptDf");
             }

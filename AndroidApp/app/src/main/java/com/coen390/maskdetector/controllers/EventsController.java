@@ -6,16 +6,12 @@ import android.widget.Toast;
 
 import com.coen390.maskdetector.EventLogActivity;
 import com.coen390.maskdetector.EventsRecyclerViewAdapter;
-import com.coen390.maskdetector.MainActivity;
-import com.coen390.maskdetector.models.Device;
 import com.coen390.maskdetector.models.Event;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Array;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
