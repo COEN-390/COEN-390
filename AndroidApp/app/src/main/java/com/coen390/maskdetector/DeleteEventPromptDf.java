@@ -40,8 +40,6 @@ public class DeleteEventPromptDf extends DialogFragment {
             @Override
             public void onClick(View v) {
                 // Send the user's response back to the listener
-                bundle.clear();
-                bundle.putBoolean("deleted", true);
                 getParentFragmentManager().setFragmentResult("delete", bundle);
                 dismiss();
             }

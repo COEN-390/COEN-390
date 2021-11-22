@@ -109,60 +109,52 @@ public class EventsController {
         }
     }
 
-
     public void setupEventsRealtime(Context context, EventsRecyclerViewAdapter eventsRecyclerViewAdapter, EventLogActivity eventLogActivity) {
         // Create the connection to the Appwrite server's realtime functionality
         Realtime eventsListener = new Realtime(AppwriteController.getClient(context));
-        eventsListener.subscribe(new String[] { "collections.61871d8957bbc.documents" }, (param) -> {
+        eventsListener.subscribe(new String[] { "collections.61871d8957bbc.documents" }, Event.class, (param) -> {
             // Implement the lambda function that will run every time there is a change in
             // the events
-            try {
-                // Get the values in the payload response
-                String eventType = param.getEvent();
-                Date timestamp = new Date(param.getTimestamp());
-                JSONObject payload = new JSONObject(param.getPayload().toString());
-                Event event = new Event(payload);
-                // Check if the modification is not for the user's organization, quit the realtime update
-                if(!payload.getString("organizationId").equals("testOrganization")) return null; // TODO: check the user's organization
+            String eventType = param.getEvent();
+            Date timestamp = new Date(param.getTimestamp());
+            Event event = param.getPayload();
+            // Check if the modification is not for the user's organization, quit the realtime update
+            if(!event.getOrganizationId().equals("testOrganization")) return null; // TODO: check the user's organization
 
-                System.out.println(timestamp.toString() + ": " + eventType);
-                // If an event gets created, add it to the saved list of events
-                if (eventType.equals("database.documents.create")) {
-                    // Payload is not in the same order, so create a proper new JSON object
-                    eventLogActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            eventsRecyclerViewAdapter.addEvent(event);
-                            eventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(eventLogActivity.getApplicationContext(), "New Alert!", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-                // If it got deleted, remove it from the recycler view's list
-                else if (eventType.equals("database.documents.delete")) {
-                    eventLogActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            eventsRecyclerViewAdapter.deleteEvent(event);
-                            eventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(context, "Alert deleted", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-                // If it got updated, modify it in the recycler view's list
-                else {
-                    eventLogActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            eventsRecyclerViewAdapter.modifyEvent(event);
-                            eventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(eventLogActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG).show();
-                            //Toast.makeText(mainActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            System.out.println(timestamp.toString() + ": " + eventType);
+            // If an event gets created, add it to the saved list of events
+            if (eventType.equals("database.documents.create")) {
+                // Payload is not in the same order, so create a proper new JSON object
+                eventLogActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        eventsRecyclerViewAdapter.addEvent(event);
+                        eventsRecyclerViewAdapter.notifyDataSetChanged();
+                        Toast.makeText(eventLogActivity.getApplicationContext(), "New Alert!", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            // If it got deleted, remove it from the recycler view's list
+            else if (eventType.equals("database.documents.delete")) {
+                eventLogActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        eventsRecyclerViewAdapter.deleteEvent(event);
+                        eventsRecyclerViewAdapter.notifyDataSetChanged();
+                        Toast.makeText(context, "Alert deleted", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            // If it got updated, modify it in the recycler view's list
+            else {
+                eventLogActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        eventsRecyclerViewAdapter.modifyEvent(event);
+                        eventsRecyclerViewAdapter.notifyDataSetChanged();
+                        //Toast.makeText(eventLogActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
             return null;
         });

@@ -37,11 +37,13 @@ public class SavedEventsController {
     private Context context;
     private Client client;
     private Database db;
+    private EventsController eventsController;
 
     public SavedEventsController(Context context) {
         this.context = context;
         this.client = AppwriteController.getClient(context);
         this.db = new Database(this.client);
+        this.eventsController = new EventsController(context);
     }
 
     public void getSavedEventsList(SavedEventsRecyclerViewAdapter savedEventsRecyclerViewAdapter, SavedEventsActivity savedEventsActivity, List<SavedEvent> events){
@@ -109,59 +111,52 @@ public class SavedEventsController {
         }
     }
 
-
     public void setupSavedEventsRealtime(Context context, SavedEventsRecyclerViewAdapter savedEventsRecyclerViewAdapter, SavedEventsActivity savedEventsActivity) {
         // Create the connection to the Appwrite server's realtime functionality
         Realtime savedEventsListener = new Realtime(AppwriteController.getClient(context));
-        savedEventsListener.subscribe(new String[] { "collections.61968895f33a0.documents" }, (param) -> {
+        savedEventsListener.subscribe(new String[] { "collections.61968895f33a0.documents" }, SavedEvent.class, (param) -> {
             // Implement the lambda function that will run every time there is a change in
             // the events
-            try {
-                // Get the values in the payload response
-                String eventType = param.getEvent();
-                Date timestamp = new Date(param.getTimestamp());
-                JSONObject payload = new JSONObject(param.getPayload().toString());
-                SavedEvent event = new SavedEvent(payload);
-                // Check if the modification is not for the user's organization, quit the realtime update
-                if(!payload.getString("organizationId").equals("testOrganization")) return null; // TODO: check the user's organization
+            String eventType = param.getEvent();
+            Date timestamp = new Date(param.getTimestamp());
+            SavedEvent savedEvent = param.getPayload();
+            // Check if the modification is not for the user's organization, quit the realtime update
+            if(!savedEvent.getOrganizationId().equals("testOrganization")) return null; // TODO: check the user's organization
 
-                System.out.println(timestamp.toString() + ": " + eventType);
-                // If an event gets created, add it to the saved list of events
-                if (eventType.equals("database.documents.create")) {
-                    // Payload is not in the same order, so create a proper new JSON object
-                    savedEventsActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            savedEventsRecyclerViewAdapter.addEvent(event);
-                            savedEventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(savedEventsActivity.getApplicationContext(), "New Alert!", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-                // If it got deleted, remove it from the recycler view's list
-                else if (eventType.equals("database.documents.delete")) {
-                    savedEventsActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            savedEventsRecyclerViewAdapter.deleteEvent(event);
-                            savedEventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(context, "Alert deleted", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-                // If it got updated, modify it in the recycler view's list
-                else {
-                    savedEventsActivity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            savedEventsRecyclerViewAdapter.modifyEvent(event);
-                            savedEventsRecyclerViewAdapter.notifyDataSetChanged();
-                            Toast.makeText(savedEventsActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG).show();
-                        }
-                    });
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            System.out.println(timestamp.toString() + ": " + eventType);
+            // If an event gets created, add it to the saved list of events
+            if (eventType.equals("database.documents.create")) {
+                // Payload is not in the same order, so create a proper new JSON object
+                savedEventsActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        savedEventsRecyclerViewAdapter.addEvent(savedEvent);
+                        savedEventsRecyclerViewAdapter.notifyDataSetChanged();
+                        Toast.makeText(savedEventsActivity.getApplicationContext(), "Saved event created", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            // If it got deleted, remove it from the recycler view's list
+            else if (eventType.equals("database.documents.delete")) {
+                savedEventsActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        savedEventsRecyclerViewAdapter.deleteEvent(savedEvent);
+                        savedEventsRecyclerViewAdapter.notifyDataSetChanged();
+                        Toast.makeText(context, "Saved event deleted", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+            // If it got updated, modify it in the recycler view's list
+            else {
+                savedEventsActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        savedEventsRecyclerViewAdapter.modifyEvent(savedEvent);
+                        savedEventsRecyclerViewAdapter.notifyDataSetChanged();
+                        //Toast.makeText(savedEventsActivity.getApplicationContext(), "Alert modified", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
             return null;
         });
@@ -204,6 +199,84 @@ public class SavedEventsController {
                                 } else {
                                     Response response = (Response) o;
                                     json = response.body().string();
+                                }
+                            } catch (Throwable th) {
+                                Log.e("ERROR", th.toString());
+                            }
+                        }
+                    }
+            );
+        } catch (AppwriteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateSavedEvent(SavedEvent savedEvent) {
+        // Create the map of values
+        Map<String, Object> values = new HashMap<>();
+        values.put("name", savedEvent.getName());
+        values.put("timestamp", savedEvent.getTimestamp());
+        values.put("organizationId", savedEvent.getOrganizationId());
+        values.put("deviceId", savedEvent.getDeviceId());
+        values.put("eventId", savedEvent.getEventId());
+
+        try {
+            db.updateDocument(
+                    "61968895f33a0",
+                    savedEvent.get$id(),
+                    values,
+                    new Continuation<Object>() {
+                        @NotNull
+                        @Override
+                        public CoroutineContext getContext() {
+                            return EmptyCoroutineContext.INSTANCE;
+                        }
+
+                        @Override
+                        public void resumeWith(@NotNull Object o) {
+                            String json = "";
+                            try {
+                                if (o instanceof Result.Failure) {
+                                    Result.Failure failure = (Result.Failure) o;
+                                    throw failure.exception;
+                                } else {
+                                    Response response = (Response) o;
+                                    json = response.body().string();
+                                }
+                            } catch (Throwable th) {
+                                Log.e("ERROR", th.toString());
+                            }
+                        }
+                    }
+            );
+        } catch (AppwriteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteSavedEvent(SavedEvent savedEvent){
+        try {
+            db.deleteDocument(
+                    "61968895f33a0",
+                    savedEvent.get$id(),
+                    new Continuation<Object>() {
+                        @NotNull
+                        @Override
+                        public CoroutineContext getContext() {
+                            return EmptyCoroutineContext.INSTANCE;
+                        }
+
+                        @Override
+                        public void resumeWith(@NotNull Object o) {
+                            String json = "";
+                            try {
+                                if (o instanceof Result.Failure) {
+                                    Result.Failure failure = (Result.Failure) o;
+                                    throw failure.exception;
+                                } else {
+                                    Event event = new Event(new JSONObject(savedEvent.toString()));
+                                    event.setSaved(false);
+                                    eventsController.updateEvent(event);
                                 }
                             } catch (Throwable th) {
                                 Log.e("ERROR", th.toString());

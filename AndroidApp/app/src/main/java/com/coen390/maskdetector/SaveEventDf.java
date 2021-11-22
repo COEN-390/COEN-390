@@ -15,6 +15,7 @@ import androidx.fragment.app.DialogFragment;
 import com.coen390.maskdetector.controllers.EventsController;
 import com.coen390.maskdetector.controllers.SavedEventsController;
 import com.coen390.maskdetector.models.Event;
+import com.coen390.maskdetector.models.SavedEvent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,19 +51,31 @@ public class SaveEventDf extends DialogFragment {
 
             // If name is good, proceed to send it to the database
             Bundle bundle = getArguments();
-            try {
-                Event event = new Event(new JSONObject(bundle.getString("event")));
-                event.setSaved(true);
-                savedEventsController.createSavedEvent(name, event);
-                eventsController.updateEvent(event);
-                // Send the event back to the listener
-                bundle.clear();
-                bundle.putString("event", event.toString());
-                getParentFragmentManager().setFragmentResult("saved", bundle);
-            } catch (JSONException e) {
-                e.printStackTrace();
+            if(bundle.getBoolean("savedEvent")){
+                try {
+                    SavedEvent savedEvent = new SavedEvent(new JSONObject(bundle.getString("event")));
+                    savedEvent.setName(name);
+                    savedEventsController.updateSavedEvent(savedEvent);
+                    // Send the event back to the listener
+                    bundle.putString("event", savedEvent.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(getContext(), "Event name updated", Toast.LENGTH_LONG).show();
+            } else {
+                try {
+                    Event event = new Event(new JSONObject(bundle.getString("event")));
+                    event.setSaved(true);
+                    savedEventsController.createSavedEvent(name, event);
+                    eventsController.updateEvent(event);
+                    // Send the event back to the listener
+                    bundle.putString("event", event.toString());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                Toast.makeText(getContext(), "Event saved", Toast.LENGTH_LONG).show();
             }
-            Toast.makeText(getContext(), "Event saved", Toast.LENGTH_LONG).show();
+            getParentFragmentManager().setFragmentResult("saved", bundle);
             dismiss();
         });
 

@@ -54,31 +54,11 @@ public class EventLogActivity extends AppCompatActivity {
         eventsController.setupEventsRealtime(getApplicationContext(), eventsRecyclerViewAdapter, this);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.action_bar_main_activity, menu);
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.logout_menu_item:
-                logout();
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private void setupUI() {
         actionBar = getSupportActionBar();
 
         actionBar.show();
-        actionBar.setHomeButtonEnabled(false);
-
+        actionBar.setHomeButtonEnabled(true);
     }
 
     private void logout() {

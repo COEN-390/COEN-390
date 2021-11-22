@@ -72,7 +72,6 @@ public class Event {
 
         // Setter methods
 
-
         public void setRead(ArrayList<String> read) {
             this.read = read;
         }

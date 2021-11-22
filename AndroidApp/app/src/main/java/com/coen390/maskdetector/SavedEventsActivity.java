@@ -34,15 +34,16 @@ public class SavedEventsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_saved_events);
 
         savedEventsController = new SavedEventsController(getApplicationContext());
-        savedEventsController.setupSavedEventsRealtime(getApplicationContext(), savedEventsRecyclerViewAdapter, this);
 
         setupUI();
+        setupRecyclerView();
+        savedEventsController.setupSavedEventsRealtime(getApplicationContext(), savedEventsRecyclerViewAdapter, this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        setupRecyclerView();
+        //setupRecyclerView();
     }
 
     private void setupUI() {
@@ -58,6 +59,12 @@ public class SavedEventsActivity extends AppCompatActivity {
         if(extras != null){
             String eventId = getIntent().getStringExtra("eventId");
             savedEventsRecyclerViewAdapter = new SavedEventsRecyclerViewAdapter(getApplicationContext(), this, eventId);
+        }
+        else{
+            savedEventsRecyclerViewAdapter = new SavedEventsRecyclerViewAdapter(getApplicationContext(), this, "");
+        }
+        savedEventsController.getSavedEventsList(savedEventsRecyclerViewAdapter, this, new ArrayList<SavedEvent>());
+        if(extras != null){
             savedEventsRecyclerViewAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override
                 public void onItemRangeInserted(int positionStart, int itemCount) {
@@ -67,10 +74,6 @@ public class SavedEventsActivity extends AppCompatActivity {
 
             });
         }
-        else{
-            savedEventsRecyclerViewAdapter = new SavedEventsRecyclerViewAdapter(getApplicationContext(), this, "");
-        }
-        savedEventsController.getSavedEventsList(savedEventsRecyclerViewAdapter, this, new ArrayList<SavedEvent>());
 
         // Create layout manager and dividers between items of the view holder
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);

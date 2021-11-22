@@ -77,7 +77,7 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
                 eventActionPromptDf.setArguments(bundle);
                 eventActionPromptDf.show(mainActivity.getSupportFragmentManager(), "EventActionPromptDf");
             }
-        }); // MIGHT NEED THIS
+        });
     }
 
     @Override
