@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 using FirebaseAdmin;
 using FirebaseAdmin.Messaging;
 using Google.Apis.Auth.OAuth2;
@@ -24,11 +25,12 @@ namespace FCMPushNotifications
             // Sends the notification
             string response = await messaging.SendAsync(new Message()
             {
-                Notification = new Notification()
+               
+                Data = new Dictionary<string, string>()
                 {
-                    Title = "No Mask Detected!!",
-                    Body = eventData,
-                    ImageUrl = "https://icons.iconarchive.com/icons/paomedia/small-n-flat/256/cat-icon.png"
+                    {"Title", "No Mask Detected!!"},
+                    {"Body", eventData},
+                    {"ImageUrl", "https://icons.iconarchive.com/icons/paomedia/small-n-flat/256/cat-icon.png"}
                 },
                 Android = new AndroidConfig()
                 {
