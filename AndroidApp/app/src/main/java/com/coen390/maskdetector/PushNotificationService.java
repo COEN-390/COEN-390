@@ -61,9 +61,10 @@ public class PushNotificationService extends FirebaseMessagingService {
             Notification notification = new Notification.Builder(this, defaultChannel)
                     .setContentTitle(data.get("Title"))
                     .setContentText(data.get("Body"))
-                    .setSmallIcon(R.mipmap.ic_launcher_icon)
+                    .setSmallIcon(R.mipmap.ic_launcher_icon) // TODO - Icon not showing properly???
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setContentIntent(pendingIntent)
+                    .setShowWhen(true)
                     .setAutoCancel(true)
                     .build();
 
