@@ -21,7 +21,7 @@ public class Loading {
         LayoutInflater inflater = activity.getLayoutInflater();
         builder.setView(inflater.inflate(R.layout.activity_loading, null));
 
-        //this can be changed to true. if changed to true, you can click outside of the loading spinner box and it will cancel. 
+        //this can be changed to true. if changed to true, you can click outside of the loading spinner box and it will cancel.
         builder.setCancelable(false);
 
         dialog = builder.create();
