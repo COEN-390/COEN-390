@@ -34,6 +34,9 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.password_edit_text);
         loginButton = findViewById(R.id.login_button);
 
+        Loading loading = new Loading(LoginActivity.this);
+
+
         authenticationController = new AuthenticationController(getApplicationContext());
 
         actionBar = getSupportActionBar();
@@ -50,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
                 System.out.println(e.getCode());
                 System.out.println(e.getResponse());
             }
+            loading.startLoading();
         });
     }
 
