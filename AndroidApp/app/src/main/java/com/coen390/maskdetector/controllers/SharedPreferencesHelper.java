@@ -42,6 +42,9 @@ public class SharedPreferencesHelper {
     }
 
     public boolean userIsEmpty(){
+        if (getUser() == null){
+            return true;
+        }
         return getUser().length() == 0 ;
     }
 

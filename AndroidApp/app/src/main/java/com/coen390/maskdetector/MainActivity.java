@@ -16,6 +16,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.OnLifecycleEvent;
 
 import com.coen390.maskdetector.controllers.AuthenticationController;
 import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
@@ -45,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private String defaultChannel = "defaultChannel";
 
     @Override
+    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -53,17 +56,18 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
         authenticationController = new AuthenticationController(getApplicationContext());
 
-        if (sharedPreferencesHelper.userIsEmpty())
+        if (sharedPreferencesHelper.userIsEmpty()){
             goToLoginActivity();
+        }else {
+            Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
+            startService(intentBackgroundService);
 
-        Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
-        startService(intentBackgroundService);
-
-        createNotificationChannel();
-        try {
-            setupUI();
-        } catch (JSONException e) {
-            e.printStackTrace();
+            createNotificationChannel();
+            try {
+                setupUI();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -146,7 +150,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(intent);
+        finish();
     }
 
     private final Button.OnClickListener onClickEventLogButton = view -> {
@@ -193,7 +199,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void logout() {
         authenticationController.endSession();
+        sharedPreferencesHelper.setUser("");
         Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
+        finish();
     }
 
     private String getUserMode() throws JSONException {

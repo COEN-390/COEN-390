@@ -56,7 +56,8 @@
         </activity>
         <activity
             android:name=".LoginActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:noHistory="true" />
         <activity
             android:name="io.appwrite.views.CallbackActivity"
             android:exported="true">
