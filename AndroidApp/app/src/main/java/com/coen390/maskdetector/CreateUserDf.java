@@ -13,13 +13,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+import com.coen390.maskdetector.controllers.AuthenticationController;
 import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
+
+import org.json.JSONException;
+
+import io.appwrite.exceptions.AppwriteException;
 
 public class CreateUserDf extends DialogFragment {
 
     private EditText editName, editEmail, editPassword;
     private Button saveButton, cancelButton;
     private SharedPreferencesHelper sharedPreferencesHelper;
+    private AuthenticationController authenticationController;
 
     @Nullable
     @Override
@@ -34,6 +40,7 @@ public class CreateUserDf extends DialogFragment {
         cancelButton = view.findViewById(R.id.buttonCancel);
 
         sharedPreferencesHelper = new SharedPreferencesHelper(getContext());
+        authenticationController = new AuthenticationController(getContext());
 
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,6 +61,14 @@ public class CreateUserDf extends DialogFragment {
                 else if(password.length() < 6){
                     Toast.makeText(getContext(), "Invalid password", Toast.LENGTH_LONG).show();
                     return;
+                } else {
+                    try {
+                        authenticationController.createUser(email, password, name);
+                    } catch (AppwriteException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
 
 //                if(databaseHelper.getProfile(studentId) != null){

@@ -5,16 +5,18 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.coen390.maskdetector.LoginActivity;
-import com.coen390.maskdetector.MainActivity;
 import androidx.annotation.NonNull;
 
+import com.coen390.maskdetector.LoginActivity;
+import com.coen390.maskdetector.MainActivity;
 import com.coen390.maskdetector.PushNotificationService;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.Timestamp;
 
@@ -36,6 +38,7 @@ public class AuthenticationController {
     private Database db;
     private SharedPreferencesHelper sharedPreferencesHelper;
     private static final String TAG = "AuthenticationController";
+    private final int[] zzz = {0}; //to sync account creation threads :)
 
     public AuthenticationController(Context context) {
         this.context = context;
@@ -45,6 +48,187 @@ public class AuthenticationController {
         this.client = AppwriteController.getClient(context);
         this.account = new Account(this.client);
         this.db = new Database(this.client);
+    }
+
+    public String createUser(String email, String password, String name) throws AppwriteException, JSONException {
+        final String[] result = {"ERROR: SOMETHING WENT WRONG"};
+        zzz[0] = 0;
+
+        account.create(
+                email,
+                password,
+                name,
+                new Continuation<Object>() {
+                    @NotNull
+                    @Override
+                    public CoroutineContext getContext() {
+                        return EmptyCoroutineContext.INSTANCE;
+                    }
+
+                    @Override
+                    public void resumeWith(@NotNull Object o) {
+                        String json = "";
+                        System.out.println("Creating User...");
+                        try {
+                            if (o instanceof Result.Failure) {
+                                Result.Failure failure = (Result.Failure) o;
+                                throw failure.exception;
+                            } else {
+                                Response response = (Response) o;
+                                json = response.body().string();
+                                result[0] = "Account Created Successfully!";
+                            }
+                        }  catch (AppwriteException e) {
+                            System.out.println("setUserLevel() " + new Timestamp(System.currentTimeMillis()));
+                            System.out.println(e.getMessage());
+                            System.out.println(e.getCode());
+                            System.out.println(e.getResponse());
+                            result[0] = "Could not create account!";
+                        } catch (Throwable th) {
+                            System.out.println("test");
+                            System.out.println(th.getMessage());
+                            Log.e("ERROR", "Unable to create session");
+                            result[0] = "Could not create account!";
+                        } finally {
+                            zzz[0]++;
+                        }
+                    }
+                }
+        );
+        while (true){
+            if (zzz[0] == 1){
+                endSession();
+                break;
+            }
+        }
+        while (true){
+            if (zzz[0] == 2){
+                createSession(email, password);
+                break;
+            }
+        }
+        while (true){
+            if (zzz[0] == 4){
+                setUserLevel("user");
+                break;
+            }
+        }
+        while (true){
+            if (zzz[0] == 5){
+                getAccount();
+                break;
+            }
+        }
+        while (true){
+            if (zzz[0] == 6){
+                break;
+            }
+        }
+        System.out.println("User should be done now");
+        return result[0];
+    }
+
+    public String createAdmin(String email, String password) throws AppwriteException, JSONException {
+
+        final String[] result = {"ERROR: SOMETHING WENT WRONG"};
+        zzz[0] = 0;
+
+        account.create(
+                email,
+                password,
+                new Continuation<Object>() {
+                    @NotNull
+                    @Override
+                    public CoroutineContext getContext() {
+                        return EmptyCoroutineContext.INSTANCE;
+                    }
+
+                    @Override
+                    public void resumeWith(@NotNull Object o) {
+                        String json = "";
+                        System.out.println("Creating User...");
+                        try {
+                            if (o instanceof Result.Failure) {
+                                Result.Failure failure = (Result.Failure) o;
+                                throw failure.exception;
+                            } else {
+                                Response response = (Response) o;
+                                json = response.body().string();
+                                result[0] = "Account Created Successfully!";
+                            }
+                        } catch (Throwable th) {
+                            Log.e("ERROR", th.toString());
+                            result[0] = "Error during account creation :(";
+                        } finally {
+                            zzz[0]++;
+                        }
+                    }
+                }
+        );
+        while (true){
+            if (zzz[0] == 1){
+                createSession(email, password);
+                break;
+            }
+        }
+        while (true){
+            if (zzz[0] == 3){
+                setUserLevel("admin");
+                break;
+            }
+        }
+        while (true){
+            if (zzz[0] == 4){
+                getAccount();
+                break;
+            }
+        }
+        while (true){
+            if (zzz[0] == 5){
+                break;
+            }
+        }
+        System.out.println("User should be done now");
+        return result[0];
+    }
+
+    private void setUserLevel(String x) throws AppwriteException, JSONException {
+        JSONObject pref = new JSONObject("{'userType':'" + x + "'}");
+        account.updatePrefs(
+                pref,
+                new Continuation<Object>() {
+                    @NotNull
+                    @Override
+                    public CoroutineContext getContext() {
+                        return EmptyCoroutineContext.INSTANCE;
+                    }
+
+                    @Override
+                    public void resumeWith(@NotNull Object o) {
+                        String json = "";
+                        try {
+                            if (o instanceof Result.Failure) {
+                                Result.Failure failure = (Result.Failure) o;
+                                throw failure.exception;
+                            } else {
+                                Response response = (Response) o;
+                                json = response.body().string();
+                            }
+                        } catch (AppwriteException e) {
+                            System.out.println("setUserLevel() " + new Timestamp(System.currentTimeMillis()));
+                            System.out.println(e.getMessage());
+                            System.out.println(e.getCode());
+                            System.out.println(e.getResponse());
+                        } catch (Throwable th) {
+                            System.out.println("test");
+                            System.out.println(th.getMessage());
+                            Log.e("ERROR", "Unable to create session");
+                        } finally {
+                            zzz[0]++;
+                        }
+                    }
+                }
+        );
     }
 
     public void createSession(String email, String password) throws AppwriteException {
@@ -79,6 +263,8 @@ public class AuthenticationController {
                     System.out.println("test");
                     System.out.println(th.getMessage());
                     Log.e("ERROR", "Unable to create session");
+                }finally {
+                    zzz[0]++;
                 }
             }
         });
@@ -111,6 +297,8 @@ public class AuthenticationController {
                         System.out.println(e.getResponse());
                     } catch (Throwable th) {
                         Log.e("ERROR", "Unable to end session");
+                    } finally {
+                        zzz[0]++;
                     }
                 }
             });
@@ -159,6 +347,8 @@ public class AuthenticationController {
             System.out.println(e.getMessage());
             System.out.println(e.getCode());
             System.out.println(e.getResponse());
+        } finally {
+            zzz[0]++;
         }
     }
 
@@ -221,4 +411,5 @@ public class AuthenticationController {
             e.printStackTrace();
         }
     }
+
 }

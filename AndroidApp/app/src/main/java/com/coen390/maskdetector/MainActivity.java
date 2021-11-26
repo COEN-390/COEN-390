@@ -10,6 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.coen390.maskdetector.controllers.AuthenticationController;
 import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -32,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
     private Button devicesButton;
     private Button usersButton;
     private Button savedEventsButton;
+    private Button testButton;
+
+    private TextView userModeView;
+    private TextView userEmailView;
 
     // Notification channel ID. Put it somewhere better
     private String defaultChannel = "defaultChannel";
@@ -52,10 +60,14 @@ public class MainActivity extends AppCompatActivity {
         startService(intentBackgroundService);
 
         createNotificationChannel();
-        setupUI();
+        try {
+            setupUI();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
-    private void setupUI() {
+    private void setupUI() throws JSONException {
         actionBar = getSupportActionBar();
         actionBar.show();
         actionBar.setHomeButtonEnabled(false);
@@ -69,6 +81,14 @@ public class MainActivity extends AppCompatActivity {
         devicesButton.setOnClickListener(onClickDevicesButton);
         usersButton.setOnClickListener(onClickUsersButton);
         savedEventsButton.setOnClickListener(onClickSavedEventsActivity);
+
+        userModeView = findViewById(R.id.userModeView);
+        String x = getUserMode();
+        userModeView.setText("Permission Mode: " + x);
+        userEmailView = findViewById(R.id.emailVIew);
+        String y = getUserEmail();
+        userEmailView.setText("User Email: " + y);
+
     }
 
     // Must do at the start before notifications can happen. Maybe put in main
@@ -140,18 +160,56 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private final Button.OnClickListener onClickUsersButton = view -> {
-        Intent intent = new Intent(this, UsersActivity.class);
-        startActivity(intent);
+        try {
+            if (getUserMode().equals("admin")) {
+                Intent intent = new Intent(this, UsersActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Error: Must be admin.", Toast.LENGTH_SHORT).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     };
 
     private final Button.OnClickListener onClickSavedEventsActivity = view -> {
-        Intent intent = new Intent(this, SavedEventsActivity.class);
-        startActivity(intent);
+        try {
+            if (getUserMode().equals("admin")) {
+                Intent intent = new Intent(this, SavedEventsActivity.class);
+                startActivity(intent);
+            } else {
+                Toast.makeText(this, "Error: Must be admin.", Toast.LENGTH_SHORT).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    };
+
+    private final Button.OnClickListener onClickTestButton = view -> {
+        JSONObject j = sharedPreferencesHelper.getUser();
+        String x = j.toString();
+
     };
 
     private void logout() {
         authenticationController.endSession();
         Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
+    }
+
+    private String getUserMode() throws JSONException {
+        JSONObject j = sharedPreferencesHelper.getUser();
+        String k = j.getString("prefs");
+        j = new JSONObject(k);
+        k = j.getString("nameValuePairs");
+        j = new JSONObject(k);
+        String x = j.getString("userType");
+        return x;
+    }
+
+    private String getUserEmail() throws JSONException {
+        JSONObject j = sharedPreferencesHelper.getUser();
+        String k = j.getString("email");
+        return k;
     }
 
 }
