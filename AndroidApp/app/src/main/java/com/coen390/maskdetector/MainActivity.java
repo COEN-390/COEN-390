@@ -61,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
         }else {
             Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
             startService(intentBackgroundService);
-
             createNotificationChannel();
             try {
                 setupUI();
@@ -72,27 +71,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupUI() throws JSONException {
-        actionBar = getSupportActionBar();
-        actionBar.show();
-        actionBar.setHomeButtonEnabled(false);
 
-        eventLogButton = findViewById(R.id.eventLogButton);
-        devicesButton = findViewById(R.id.devicesButton);
-        usersButton = findViewById(R.id.usersButton);
-        savedEventsButton = findViewById(R.id.savedEventsButton);
+        JSONObject z = sharedPreferencesHelper.getUser();
+        try {
+            String y = z.getString("prefs");
+            if (y.equals("{}")){
+                authenticationController.setUserLevel("user");
+            }
+        } catch (Exception e){
+            System.out.println("fillUser(): JSON Parsing failure");
+        } finally {
+            actionBar = getSupportActionBar();
+            actionBar.show();
+            actionBar.setHomeButtonEnabled(false);
 
-        eventLogButton.setOnClickListener(onClickEventLogButton);
-        devicesButton.setOnClickListener(onClickDevicesButton);
-        usersButton.setOnClickListener(onClickUsersButton);
-        savedEventsButton.setOnClickListener(onClickSavedEventsActivity);
+            eventLogButton = findViewById(R.id.eventLogButton);
+            devicesButton = findViewById(R.id.devicesButton);
+            usersButton = findViewById(R.id.usersButton);
+            savedEventsButton = findViewById(R.id.savedEventsButton);
 
-        userModeView = findViewById(R.id.userModeView);
-        String x = getUserMode();
-        userModeView.setText("Permission Mode: " + x);
-        userEmailView = findViewById(R.id.emailVIew);
-        String y = getUserEmail();
-        userEmailView.setText("User Email: " + y);
+            eventLogButton.setOnClickListener(onClickEventLogButton);
+            devicesButton.setOnClickListener(onClickDevicesButton);
+            usersButton.setOnClickListener(onClickUsersButton);
+            savedEventsButton.setOnClickListener(onClickSavedEventsActivity);
 
+            System.out.println("About to set text");
+            userModeView = findViewById(R.id.userModeView);
+            String x = getUserMode();
+            userModeView.setText("Permission Mode: " + x);
+            userEmailView = findViewById(R.id.emailVIew);
+            String y = getUserEmail();
+            userEmailView.setText("User Email: " + y);
+            System.out.println("Text set");
+
+        }
     }
 
     // Must do at the start before notifications can happen. Maybe put in main
@@ -206,12 +218,18 @@ public class MainActivity extends AppCompatActivity {
 
     private String getUserMode() throws JSONException {
         JSONObject j = sharedPreferencesHelper.getUser();
-        String k = j.getString("prefs");
-        j = new JSONObject(k);
-        k = j.getString("nameValuePairs");
-        j = new JSONObject(k);
-        String x = j.getString("userType");
-        return x;
+        if (j != null) {
+            String k = j.getString("prefs");
+            if (k.equals("{}")){System.out.println("ERROR: Prefs are empty?!");return "user";}
+            j = new JSONObject(k);
+            k = j.getString("nameValuePairs");
+            j = new JSONObject(k);
+            String x = j.getString("userType");
+            return x;
+        } else {
+            System.out.println("Default Value Returned! This should only show on first user login");
+            return "user";
+        }
     }
 
     private String getUserEmail() throws JSONException {

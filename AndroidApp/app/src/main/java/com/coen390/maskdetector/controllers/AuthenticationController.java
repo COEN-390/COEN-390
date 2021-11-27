@@ -95,35 +95,6 @@ public class AuthenticationController {
                     }
                 }
         );
-        while (true){
-            if (zzz[0] == 1){
-                endSession();
-                break;
-            }
-        }
-        while (true){
-            if (zzz[0] == 2){
-                createSession(email, password);
-                break;
-            }
-        }
-        while (true){
-            if (zzz[0] == 4){
-                setUserLevel("user");
-                break;
-            }
-        }
-        while (true){
-            if (zzz[0] == 5){
-                getAccount();
-                break;
-            }
-        }
-        while (true){
-            if (zzz[0] == 6){
-                break;
-            }
-        }
         System.out.println("User should be done now");
         return result[0];
     }
@@ -192,7 +163,7 @@ public class AuthenticationController {
         return result[0];
     }
 
-    private void setUserLevel(String x) throws AppwriteException, JSONException {
+    public int setUserLevel(String x) throws AppwriteException, JSONException {
         JSONObject pref = new JSONObject("{'userType':'" + x + "'}");
         account.updatePrefs(
                 pref,
@@ -213,6 +184,8 @@ public class AuthenticationController {
                             } else {
                                 Response response = (Response) o;
                                 json = response.body().string();
+                                System.out.println("setUserLevel() has returned: " + json);
+                                sharedPreferencesHelper.setUser(json);
                             }
                         } catch (AppwriteException e) {
                             System.out.println("setUserLevel() " + new Timestamp(System.currentTimeMillis()));
@@ -229,6 +202,7 @@ public class AuthenticationController {
                     }
                 }
         );
+        return 1;
     }
 
     public void createSession(String email, String password) throws AppwriteException {
@@ -310,7 +284,7 @@ public class AuthenticationController {
         }
     }
 
-    private void getAccount() {
+    public void getAccount() {
         try {
             account.get(new Continuation<Object>() {
                 @NotNull

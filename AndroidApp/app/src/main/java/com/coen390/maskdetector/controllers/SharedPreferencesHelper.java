@@ -42,14 +42,16 @@ public class SharedPreferencesHelper {
     }
 
     public boolean userIsEmpty(){
-        if (getUser() == null){
+        if (getUser() == null || getUser().equals("")){
             return true;
         }
         return getUser().length() == 0 ;
     }
 
     public void setUser(String json) {
+        System.out.println("Setting User as " + json);
         editor.putString("user", json);
         editor.apply();
+        System.out.println("User Has Been Set");
     }
 }
