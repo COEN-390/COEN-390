@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
         authenticationController = new AuthenticationController(getApplicationContext());
 
         if (sharedPreferencesHelper.userIsEmpty()){
+            System.out.println("BOOTING YOU TO THE MAIN MENU***************************************************");
             goToLoginActivity();
         }else {
             Intent intentBackgroundService = new Intent(this, PushNotificationService.class);

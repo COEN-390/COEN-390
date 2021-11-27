@@ -207,6 +207,7 @@ public class AuthenticationController {
 
     public void createSession(String email, String password) throws AppwriteException {
         // Create the session
+        int[] q = {0};
         account.createSession(email, password, new Continuation<Object>() {
             @NotNull
             @Override
@@ -222,11 +223,18 @@ public class AuthenticationController {
                         Result.Failure failure = (Result.Failure) o;
                         throw failure.exception;
                     } else {
-                        getAccount();
+                        q[0] = getAccount();
                         subscribeToken();
-                        Intent intent = new Intent(context, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        context.startActivity(intent);
+                        while (true) {
+                            if (q[0] > 0) {
+                                System.out.println("PRE INTENT********************");
+                                Intent intent = new Intent(context, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                context.startActivity(intent);
+                                System.out.println("POST INTENT********************");
+                                break;
+                            }
+                        }
                     }
                 } catch (AppwriteException e) {
                     System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
@@ -238,6 +246,7 @@ public class AuthenticationController {
                     System.out.println(th.getMessage());
                     Log.e("ERROR", "Unable to create session");
                 }finally {
+                    System.out.println("SESSION HAS BEEN CREATED********************");
                     zzz[0]++;
                 }
             }
@@ -284,7 +293,9 @@ public class AuthenticationController {
         }
     }
 
-    public void getAccount() {
+    public int getAccount() {
+        System.out.println("Starting getAccount()");
+        int[] q = {0};
         try {
             account.get(new Continuation<Object>() {
                 @NotNull
@@ -303,7 +314,7 @@ public class AuthenticationController {
                         } else {
                             Response response = (Response) o;
                             json = response.body().string();
-                            sharedPreferencesHelper.setUser(json);
+                            q[0] = sharedPreferencesHelper.setUser(json);
                         }
                     } catch (AppwriteException e) {
                         System.out.println("storeUsername() " + new Timestamp(System.currentTimeMillis()));
@@ -322,8 +333,13 @@ public class AuthenticationController {
             System.out.println(e.getCode());
             System.out.println(e.getResponse());
         } finally {
+            while (true){
+                if (q[0] > 0) break;
+            }
             zzz[0]++;
         }
+        System.out.println("getAccount() finished");
+        return 1;
     }
 
     /**
