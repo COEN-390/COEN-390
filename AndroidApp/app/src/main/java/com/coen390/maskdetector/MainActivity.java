@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,12 +64,19 @@ public class MainActivity extends AppCompatActivity {
             Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
             startService(intentBackgroundService);
             createNotificationChannel();
-            try {
-                setupUI();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
+    }
+
+    @Override
+    protected void onStart() {
+        try {
+            setupUI();
+            userView();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        super.onStart();
     }
 
     private void setupUI() throws JSONException {
@@ -136,18 +144,21 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-//        if(/* TODO: user isn't admin */) {
-//            menu.findItem(R.id.admin_menu_item).setVisible(false);
-//            menu.findItem(R.id.saved_events_menu_item).setVisible(false);
-//        }
-//        else{
-//            menu.findItem(R.id.admin_menu_item).setVisible(true);
-//            menu.findItem(R.id.saved_events_menu_item).setVisible(true);
-//        }
+    /**
+     * Method called after SetupUI to determine what buttons the user has access to depending on their level (admin or user)
+     * @throws JSONException
+     */
+    public void userView() throws JSONException {
+        String x = getUserMode();
 
-        return super.onPrepareOptionsMenu(menu);
+        if(x.equals("admin")) {
+            usersButton.setVisibility(View.VISIBLE);
+            savedEventsButton.setVisibility(View.VISIBLE);
+        }
+        else{
+            usersButton.setVisibility(View.INVISIBLE);
+            savedEventsButton.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
