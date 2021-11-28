@@ -39,6 +39,9 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_button);
         newAccountButton = findViewById(R.id.newAccount);
 
+        Loading loading = new Loading(LoginActivity.this);
+
+
         authenticationController = new AuthenticationController(getApplicationContext());
 
         actionBar = getSupportActionBar();
@@ -55,6 +58,7 @@ public class LoginActivity extends AppCompatActivity {
                 System.out.println(e.getCode());
                 System.out.println(e.getResponse());
             }
+            loading.startLoading();
         });
 
         newAccountButton.setOnClickListener(view -> {

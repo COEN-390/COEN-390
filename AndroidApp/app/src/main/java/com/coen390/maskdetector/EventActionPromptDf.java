@@ -103,7 +103,7 @@ public class EventActionPromptDf extends DialogFragment {
 
         saveVideoButton.setOnClickListener(v -> {
             System.out.println(bundle.getString("fileId"));
-            videoClipController.downloadFile(bundle.getString("fileId"), event.get$id());
+            videoClipController.downloadFile(bundle.getString("fileId"), bundle.getString("eventId"));
         });
 
         return view;
