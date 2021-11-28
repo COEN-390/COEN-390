@@ -19,6 +19,7 @@ public class SavedEvent {
     private String organizationId;
     private String deviceId;
     private String eventId;
+    private String fileId;
 
     public SavedEvent(JSONObject event){
         try {
@@ -30,6 +31,7 @@ public class SavedEvent {
             this.organizationId = event.getString("organizationId");
             this.deviceId = event.getString("deviceId");
             this.eventId = event.getString("eventId");
+            this.fileId = event.getString("fileId");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -125,4 +127,9 @@ public class SavedEvent {
     public void setName(String name){
         this.name = name;
     }
+
+    public String getFileId() {
+        return fileId;
+    }
+
 }
