@@ -4,8 +4,6 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.coen390.maskdetector.EventsRecyclerViewAdapter;
-import com.coen390.maskdetector.MainActivity;
 import com.coen390.maskdetector.SavedEventsActivity;
 import com.coen390.maskdetector.SavedEventsRecyclerViewAdapter;
 import com.coen390.maskdetector.models.Event;
@@ -13,7 +11,6 @@ import com.coen390.maskdetector.models.SavedEvent;
 
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.Timestamp;
@@ -170,6 +167,7 @@ public class SavedEventsController {
         values.put("organizationId", event.getOrganizationId());
         values.put("deviceId", event.getDeviceId());
         values.put("eventId", event.get$id());
+        values.put("fileId", event.getFileId());
 
         // Create the permissions (write so that the admin can change the event's name)
         List<String> read = new ArrayList<String>();
@@ -288,4 +286,5 @@ public class SavedEventsController {
             e.printStackTrace();
         }
     }
+
 }

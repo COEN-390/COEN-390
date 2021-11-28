@@ -1,10 +1,8 @@
 package com.coen390.maskdetector;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,8 +88,10 @@ public class SavedEventsRecyclerViewAdapter extends RecyclerView.Adapter<SavedEv
 
                 EventActionPromptDf eventActionPromptDf = new EventActionPromptDf();
                 Bundle bundle = new Bundle();
-                bundle.putString("event", events.get(pos).toString());
+                bundle.putString("event", events.get(position).toString());
                 bundle.putBoolean("savedEvent", true);
+                bundle.putString("fileId", events.get(position).getFileId());
+                bundle.putString("eventId", events.get(position).getEventId());
                 eventActionPromptDf.setArguments(bundle);
                 eventActionPromptDf.show(savedEventsActivity.getSupportFragmentManager(), "EventActionPromptDf");
             }
