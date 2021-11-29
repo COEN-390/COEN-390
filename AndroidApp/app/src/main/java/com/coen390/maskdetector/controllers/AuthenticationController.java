@@ -10,6 +10,8 @@ import androidx.annotation.NonNull;
 import com.coen390.maskdetector.LoginActivity;
 import com.coen390.maskdetector.MainActivity;
 import com.coen390.maskdetector.PushNotificationService;
+import com.coen390.maskdetector.UsersActivity;
+import com.coen390.maskdetector.UsersRecyclerViewAdapter;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -401,5 +403,4 @@ public class AuthenticationController {
             e.printStackTrace();
         }
     }
-
 }

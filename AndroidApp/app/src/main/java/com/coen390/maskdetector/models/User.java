@@ -3,83 +3,74 @@ package com.coen390.maskdetector.models;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class User {
     private String $id;
-    private String name;
-    private float registration;
-    private float status;
-    private float passwordUpdate;
+    private String $collection;
+    private User.Permissions $permissions;
     private String email;
-    private boolean emailVerification;
-    Prefs prefs;
+    private String organizationId;
+    private String name;
+    private String userLevel;
 
     public User(JSONObject user){
         try {
             this.$id = user.getString("$id");
-            this.name = user.getString("name");
-            this.registration = (float) user.getDouble("registration");
-            this.status = (float) user.getDouble("status");
-            this.passwordUpdate = (float) user.getDouble("passwordUpdate");
+            this.$collection = user.getString("$collection");
+            this.$permissions = new User.Permissions(user.getJSONObject("$permissions"));
             this.email = user.getString("email");
-            this.emailVerification = user.getBoolean("emailVerification");
-            this.prefs = new Prefs(user.getJSONObject("prefs"));
+            this.organizationId = user.getString("organizationId");
+            this.name = user.getString("name");
+            this.userLevel = user.getString("userLevel");
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private class Prefs {
-        NameValuePairs nameValuePairs;
+    private class Permissions{
+        private ArrayList<String> read;
+        private ArrayList<String> write;
 
-        public Prefs(JSONObject prefs){
+        public Permissions(JSONObject permissions){
             try {
-                this.nameValuePairs = new NameValuePairs(prefs.getJSONObject("nameValuePairs"));
+                JSONArray readPermissions = permissions.getJSONArray("read");
+                this.read = new ArrayList<String>();
+                for(int i = 0; i < readPermissions.length(); i++){
+                    this.read.add(readPermissions.getString(i));
+                }
+                JSONArray writePermissions = permissions.getJSONArray("write");
+                this.write = new ArrayList<String>();
+                for(int i = 0; i < writePermissions.length(); i++){
+                    this.write.add(writePermissions.getString(i));
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        private class NameValuePairs {
-            private String userType;
-            private String organizationId;
+        // Getter methods
 
-            public NameValuePairs(JSONObject nameValuePairs){
-                try {
-                    this.userType = nameValuePairs.getString("userType");
-                    this.organizationId = nameValuePairs.getString("organizationId");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // Getter Methods
-
-            public String getUserType() {
-                return userType;
-            }
-
-            public String getOrganizationId(){
-                return organizationId;
-            }
-
-            // Setter Methods
-
-            public void setUserType(String userType) {
-                this.userType = userType;
-            }
-
-            public void setOrganizationId(String organizationId) {
-                this.organizationId = organizationId;
-            }
+        public ArrayList<String> getRead() {
+            return read;
         }
 
-        // Getter Methods
+        public ArrayList<String> getWrite() {
+            return write;
+        }
 
-        public NameValuePairs getNameValuePairs() {
-            return nameValuePairs;
+        // Setter methods
+
+        public void setRead(ArrayList<String> read) {
+            this.read = read;
+        }
+
+        public void setWrite(ArrayList<String> write) {
+            this.write = write;
         }
     }
 
@@ -100,61 +91,57 @@ public class User {
         return $id;
     }
 
+    public User.Permissions get$permissions() {
+        return $permissions;
+    }
+
+    public String getOrganizationId() {
+        return organizationId;
+    }
+
     public String getName() {
         return name;
-    }
-
-    public float getRegistration() {
-        return registration;
-    }
-
-    public float getStatus() {
-        return status;
-    }
-
-    public float getPasswordUpdate() {
-        return passwordUpdate;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public boolean getEmailVerification() {
-        return emailVerification;
+    public String getUserLevel() {
+        return userLevel;
     }
 
-    public Prefs getPrefs() {
-        return prefs;
+    public String get$collection() {
+        return $collection;
     }
 
     // Setter Methods
 
-    public void set$id(String $id) {
-        this.$id = $id;
+    public void set$id(String id) {
+        this.$id = id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void set$collection(String collection) {
+        this.$collection = collection;
     }
 
-    public void setRegistration(float registration) {
-        this.registration = registration;
+    public void setOrganizationId(String organizationId) {
+        this.organizationId = organizationId;
     }
 
-    public void setStatus(float status) {
-        this.status = status;
-    }
-
-    public void setPasswordUpdate(float passwordUpdate) {
-        this.passwordUpdate = passwordUpdate;
+    public void set$permissions(Permissions $permissions) {
+        this.$permissions = $permissions;
     }
 
     public void setEmail(String email) {
         this.email = email;
     }
 
-    public void setEmailVerification(boolean emailVerification) {
-        this.emailVerification = emailVerification;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUserLevel(String userLevel) {
+        this.userLevel = userLevel;
     }
 }
