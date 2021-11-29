@@ -41,10 +41,12 @@ public class AuthenticationController {
     private SharedPreferencesHelper sharedPreferencesHelper;
     private static final String TAG = "AuthenticationController";
     private final int[] zzz = {0}; //to sync account creation threads :)
+    private UsersController usersController;
 
     public AuthenticationController(Context context) {
         this.context = context;
         sharedPreferencesHelper = new SharedPreferencesHelper(context);
+        usersController = new UsersController(context);
 
         // Initialize Appwrite SDK
         this.client = AppwriteController.getClient(context);
@@ -97,6 +99,9 @@ public class AuthenticationController {
                     }
                 }
         );
+
+        usersController.createUser(name, email, "id", "user"); //TODO: setup organization ID
+
         System.out.println("User should be done now");
         return result[0];
     }
@@ -161,7 +166,53 @@ public class AuthenticationController {
                 break;
             }
         }
+
+        usersController.createUser("admin", email, "id", "admin"); //TODO: setup organization ID
+
         System.out.println("User should be done now");
+
+        
+        return result[0];
+    }
+
+    /**
+     * Method used to delete an existing user from the Appwrite Users list
+     * @return Result of the operation (Success or failure)
+     * @throws AppwriteException
+     * @throws JSONException
+     */
+    public String deleteUser(String email) throws AppwriteException, JSONException {
+        final String[] result = {"ERROR: SOMETHING WENT WRONG"};
+        zzz[0] = 0;
+
+        account.delete(new Continuation<Object>() {
+            @NotNull
+            @Override
+            public CoroutineContext getContext() {
+                return EmptyCoroutineContext.INSTANCE;
+            }
+
+            @Override
+            public void resumeWith(@NotNull Object o) {
+                String json = "";
+                try {
+                    if (o instanceof Result.Failure) {
+                        Result.Failure failure = (Result.Failure) o;
+                        throw failure.exception;
+                    } else {
+                        Response response = (Response) o;
+                        json = response.body().string();
+                        result[0] = "Account Deleted Successfully!";
+                    }
+                } catch (Throwable th) {
+                Log.e("ERROR", th.toString());
+                }
+            }
+        });
+
+        usersController.deleteUserFromCollection(email);
+
+        System.out.println("User should be deleted now");
         return result[0];
     }
 

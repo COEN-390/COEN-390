@@ -106,7 +106,7 @@ public class UsersController {
         }
     }
 
-    public void getUserFromCollection(String email){
+    public void deleteUserFromCollection(String email){
         List<String> filters = new ArrayList<String>();
         filters.add("organizationId=testOrganization"); // TODO: check the user's organization
         filters.add("email=" + email);

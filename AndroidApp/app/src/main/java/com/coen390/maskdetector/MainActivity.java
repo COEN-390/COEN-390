@@ -17,6 +17,9 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.OnLifecycleEvent;
 
@@ -25,6 +28,8 @@ import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import io.appwrite.exceptions.AppwriteException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -43,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView userModeView;
     private TextView userEmailView;
+
+    private Bundle bundle;
 
     // Notification channel ID. Put it somewhere better
     private String defaultChannel = "defaultChannel";
@@ -169,6 +176,9 @@ public class MainActivity extends AppCompatActivity {
         case R.id.logout_menu_item:
             logout();
             break;
+        case R.id.delete_menu_item:
+            userDelete();
+            break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -228,6 +238,33 @@ public class MainActivity extends AppCompatActivity {
         sharedPreferencesHelper.setUser("");
         Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
         finish();
+    }
+
+    private void userDelete(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        DeleteEventPromptDf deleteEventPromptDf = new DeleteEventPromptDf();
+        Bundle newBundle = new Bundle();
+        newBundle.putString("message", "Are you sure you want to delete this profile?");
+        deleteEventPromptDf.setArguments(newBundle);
+        deleteEventPromptDf.show(fragmentManager, "DeleteEventPromptDf");
+        // Set up a listener to be able to know if the profile is to be deleted
+        FragmentResultListener listener = new FragmentResultListener() {
+            @Override
+            public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                if(requestKey.equals("delete")){
+                    try {
+                        authenticationController.deleteUser(getUserEmail());
+
+                    } catch (AppwriteException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    finish();
+                }
+            }
+        };
+        fragmentManager.setFragmentResultListener("delete", deleteEventPromptDf, listener);
     }
 
     private String getUserMode() throws JSONException {
