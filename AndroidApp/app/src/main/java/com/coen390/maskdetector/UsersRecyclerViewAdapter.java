@@ -9,25 +9,26 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
+import com.coen390.maskdetector.models.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecyclerViewAdapter.ViewHolder> {
 
-    private SharedPreferencesHelper sharedPreferencesHelper;
-    private List<String> users;
+    private List<User> users;
+    private UsersActivity usersActivity;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
         private TextView nameText;
         private TextView emailText;
-        private TextView passwordText;
+        private TextView userLevelText;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             nameText = itemView.findViewById(R.id.nameText);
-            emailText = itemView.findViewById(R.id.eventTimestampText);
-            passwordText = itemView.findViewById(R.id.passwordText);
+            emailText = itemView.findViewById(R.id.emailText);
+            userLevelText = itemView.findViewById(R.id.userLevelText);
         }
 
         public TextView getNameText() {
@@ -36,14 +37,14 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
         public TextView getEmailText() {
             return emailText;
         }
-        public TextView getPasswordText() {
-            return passwordText;
+        public TextView getUserLevelText() {
+            return userLevelText;
         }
     }
 
-    public UsersRecyclerViewAdapter(Context context, List<String> users) {
-        this.sharedPreferencesHelper = new SharedPreferencesHelper(context);
-        this.users = users;
+    public UsersRecyclerViewAdapter(Context context, UsersActivity usersActivity) {
+        this.usersActivity = usersActivity;
+        this.users = new ArrayList<>();
     }
 
     @NonNull
@@ -55,9 +56,9 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.getNameText().setText("Name");
-        holder.getEmailText().setText("Email");
-        holder.getPasswordText().setText("Password");
+        holder.getNameText().setText(users.get(position).getName());
+        holder.getEmailText().setText(users.get(position).getEmail());
+        holder.getUserLevelText().setText(users.get(position).getUserLevel());
 
         // TODO: add a DF on item click that prompts for user deletion or elements change
         // Set onClickListener for every item to the same activity
@@ -75,7 +76,30 @@ public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecycler
 
     @Override
     public int getItemCount() {
-        if(users.equals("")) return 0;
-        else return users.size();
+        return users.size();
+    }
+    
+    public void addUser(User user){
+        users.add(user);
+    }
+
+    public void deleteUser(User user) {
+        for(int i = 0; i < users.size(); i++){
+            if(user.get$id().equals(users.get(i).get$id())){
+                users.remove(i);
+            }
+        }
+    }
+
+    public void modifyUser(User user) {
+        for(int i = 0; i < users.size(); i++){
+            if(user.get$id().equals(users.get(i).get$id())){
+                users.set(i, user);
+            }
+        }
+    }
+
+    public void setUsersList(List<User> usersList) {
+        users = usersList;
     }
 }

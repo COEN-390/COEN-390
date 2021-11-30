@@ -15,6 +15,8 @@
         <entry key="..\:/Github/COEN-390/COEN-390/AndroidApp/app/src/main/res/layout/activity_users.xml" value="0.3" />
         <entry key="..\:/Github/COEN-390/COEN-390/AndroidApp/app/src/main/res/layout/devices_item.xml" value="0.3" />
         <entry key="..\:/Github/COEN-390/COEN-390/AndroidApp/app/src/main/res/layout/df_create_user.xml" value="0.24479166666666666" />
+        <entry key="..\:/Github/COEN-390/COEN-390/AndroidApp/app/src/main/res/layout/df_delete_event_prompt.xml" value="0.22037037037037038" />
+        <entry key="..\:/Github/COEN-390/COEN-390/AndroidApp/app/src/main/res/layout/df_event_action_prompt.xml" value="0.22037037037037038" />
         <entry key="..\:/Github/COEN-390/COEN-390/AndroidApp/app/src/main/res/layout/events_item.xml" value="0.24479166666666666" />
         <entry key="..\:/Github/COEN-390/COEN-390/AndroidApp/app/src/main/res/layout/users_item.xml" value="0.2328125" />
         <entry key="..\:/Github/COEN-390/COEN-390/AndroidApp/app/src/main/res/menu/action_bar_main_activity.xml" value="0.2328125" />
@@ -27,6 +29,21 @@
         <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/layout/events_item.xml" value="0.36666666666666664" />
         <entry key="..\:/Repositories/temp/COEN-390/AndroidApp/app/src/main/res/menu/action_bar_main_activity.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/layout/activity_login.xml" value="0.2957427536231884" />
+<<<<<<< Updated upstream
+=======
+        <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/layout/activity_main.xml" value="0.33" />
+        <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/layout/activity_saved_events.xml" value="0.3390625" />
+        <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/layout/activity_users.xml" value="0.3390625" />
+        <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/layout/devices_item.xml" value="0.3390625" />
+        <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/layout/df_create_user.xml" value="0.3390625" />
+        <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/layout/df_delete_event_prompt.xml" value="0.3390625" />
+        <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/layout/df_event_action_prompt.xml" value="0.3390625" />
+        <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/layout/df_save_event.xml" value="0.3390625" />
+        <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/layout/events_item.xml" value="0.3390625" />
+        <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/layout/saved_events_item.xml" value="0.3390625" />
+        <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/layout/users_item.xml" value="0.3390625" />
+        <entry key="..\:/Users/FO/Documents/GitHub/COEN-390/AndroidApp/app/src/main/res/menu/action_bar_main_activity.xml" value="0.253125" />
+>>>>>>> Stashed changes
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.27717391304347827" />
       </map>
     </option>

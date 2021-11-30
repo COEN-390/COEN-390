@@ -26,10 +26,7 @@ public class EventLogActivity extends AppCompatActivity {
 
     private static final String TAG = "EventLogActivity";
 
-    private SharedPreferencesHelper sharedPreferencesHelper;
-    private AuthenticationController authenticationController;
     private ActionBar actionBar;
-    private MenuInflater menuInflater;
     private RecyclerView eventsRecyclerView;
     private EventsRecyclerViewAdapter eventsRecyclerViewAdapter;
     private EventsController eventsController;
@@ -45,8 +42,6 @@ public class EventLogActivity extends AppCompatActivity {
         Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
         startService(intentBackgroundService);
 
-        sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
-        authenticationController = new AuthenticationController(getApplicationContext());
         eventsController = new EventsController(getApplicationContext());
 
         setupUI();
@@ -59,11 +54,6 @@ public class EventLogActivity extends AppCompatActivity {
 
         actionBar.show();
         actionBar.setHomeButtonEnabled(true);
-    }
-
-    private void logout() {
-        authenticationController.endSession();
-        Toast.makeText(this, "You have been logged out", Toast.LENGTH_LONG).show();
     }
 
     protected void goToSavedEventsActivity(String eventId) {

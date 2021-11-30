@@ -87,8 +87,6 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
         return events.size();
     }
 
-
-
     public void addEvent(Event event) {
         events.add(event);
     }
