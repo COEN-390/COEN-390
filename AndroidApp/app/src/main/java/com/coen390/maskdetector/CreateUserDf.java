@@ -73,9 +73,6 @@ public class CreateUserDf extends DialogFragment {
                     }
                     loading.startLoading();
                 }
-                //---- loading spinner
-                //loading.startLoading();
-                //loading.dismissLoading();
 
 //                if(databaseHelper.getProfile(studentId) != null){
 //                    Toast.makeText(getContext(), "Student ID already exists", Toast.LENGTH_LONG).show();
@@ -88,9 +85,9 @@ public class CreateUserDf extends DialogFragment {
                     public void run() {
                         ((UsersActivity) requireActivity()).setupRecyclerView();
                         dismiss();
+                        loading.dismissLoading();
                     }
                 }, 5000);
-                //loading.dismissLoading();
             }
 
         });
