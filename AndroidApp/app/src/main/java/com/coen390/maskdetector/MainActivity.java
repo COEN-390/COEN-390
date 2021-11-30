@@ -176,9 +176,9 @@ public class MainActivity extends AppCompatActivity {
         case R.id.logout_menu_item:
             logout();
             break;
-        case R.id.delete_menu_item:
-            userDelete();
-            break;
+//        case R.id.delete_menu_item:
+//            userDelete();
+//            break;
         }
 
         return super.onOptionsItemSelected(item);
