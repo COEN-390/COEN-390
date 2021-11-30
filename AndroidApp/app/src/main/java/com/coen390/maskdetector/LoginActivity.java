@@ -71,6 +71,7 @@ public class LoginActivity extends AppCompatActivity {
                 System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
                 System.out.println(e.getMessage());
             }
+            loading.startLoading();
         });
 
     }

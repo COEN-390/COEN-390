@@ -22,6 +22,7 @@ import io.appwrite.exceptions.AppwriteException;
 
 public class CreateUserDf extends DialogFragment {
 
+
     private EditText editName, editEmail, editPassword;
     private Button saveButton, cancelButton;
     private SharedPreferencesHelper sharedPreferencesHelper;
@@ -43,6 +44,7 @@ public class CreateUserDf extends DialogFragment {
         authenticationController = new AuthenticationController(getContext());
 
         saveButton.setOnClickListener(new View.OnClickListener() {
+            Loading loading = new Loading(getActivity());
             @Override
             public void onClick(View view) {
                 // Temporary save text
@@ -69,14 +71,18 @@ public class CreateUserDf extends DialogFragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    //loading.startLoading();
                 }
+                //---- loading spinner
+                //loading.startLoading();
+                //loading.dismissLoading();
 
 //                if(databaseHelper.getProfile(studentId) != null){
 //                    Toast.makeText(getContext(), "Student ID already exists", Toast.LENGTH_LONG).show();
 //                    return;
 //                } //TODO: check if the user exists by email (unless it's done automatically by Appwrite)
 
-                // TODO: add a loading icon while waiting
+                // TODO: add a loading icon while waiting (DONE)
                 (new Handler()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
