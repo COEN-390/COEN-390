@@ -71,7 +71,7 @@ public class CreateUserDf extends DialogFragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    //loading.startLoading();
+                    loading.startLoading();
                 }
                 //---- loading spinner
                 //loading.startLoading();
@@ -90,7 +90,9 @@ public class CreateUserDf extends DialogFragment {
                         dismiss();
                     }
                 }, 5000);
+                //loading.dismissLoading();
             }
+
         });
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
