@@ -6,17 +6,15 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Notification;
 import android.os.Bundle;
-import android.widget.Toast;
 
 import com.coen390.maskdetector.controllers.DevicesController;
-import com.coen390.maskdetector.models.Device;
-
-import org.json.JSONArray;
 
 import io.appwrite.exceptions.AppwriteException;
 
+/**
+ * Class used to setup and implement the DevicesActivity
+ */
 public class DevicesActivity extends AppCompatActivity {
     private DevicesRecyclerViewAdapter devicesRecyclerViewAdapter;
     private RecyclerView devicesRecyclerView;
@@ -33,12 +31,18 @@ public class DevicesActivity extends AppCompatActivity {
         setupRecyclerView();
     }
 
+    /**
+     * Method used to setup the UI of the DevicesActivity
+     */
     private void setupUI() {
         actionBar = getSupportActionBar();
         actionBar.show();
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
+    /**
+     * Method used to setup the Recycler View containing all registered devices
+     */
     private void setupRecyclerView() {
         devicesRecyclerView = findViewById(R.id.devicesRecyclerView);
         devicesRecyclerViewAdapter = new DevicesRecyclerViewAdapter(this.getApplicationContext());

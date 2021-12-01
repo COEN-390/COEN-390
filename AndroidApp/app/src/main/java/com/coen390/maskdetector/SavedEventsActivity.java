@@ -7,18 +7,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.LayoutInflater;
-import android.view.View;
 
 import com.coen390.maskdetector.controllers.SavedEventsController;
-import com.coen390.maskdetector.models.Event;
 import com.coen390.maskdetector.models.SavedEvent;
 
 import java.util.ArrayList;
 
-import kotlinx.coroutines.Delay;
 
+/**
+ * Class used to setup and implement the SavedEventsActivity
+ */
 public class SavedEventsActivity extends AppCompatActivity {
 
     private SavedEventsController savedEventsController;
@@ -46,6 +44,9 @@ public class SavedEventsActivity extends AppCompatActivity {
         //setupRecyclerView();
     }
 
+    /**
+     * Method used to setup the UI of the SavedEventsActivity
+     */
     private void setupUI() {
         actionBar = getSupportActionBar();
 
@@ -53,6 +54,9 @@ public class SavedEventsActivity extends AppCompatActivity {
         actionBar.setHomeButtonEnabled(true);
     }
 
+    /**
+     * Method used to setup the Recycler View containing all Saved Events
+     */
     private void setupRecyclerView(){
         savedEventsRecyclerView = findViewById(R.id.savedEventsRecyclerView);
         extras = getIntent().getExtras();
@@ -85,6 +89,10 @@ public class SavedEventsActivity extends AppCompatActivity {
         savedEventsRecyclerView.setAdapter(savedEventsRecyclerViewAdapter);
     }
 
+    /**
+     * Method used to highlight the selected saved event on the recycler view
+     * @param position
+     */
     public void setHighlightedPosition(int position){
         this.highlightedPosition = position;
     }

@@ -20,8 +20,13 @@ import com.coen390.maskdetector.controllers.EventsController;
 import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
 import com.coen390.maskdetector.models.Event;
 
+import org.json.JSONException;
+
 import java.util.ArrayList;
 
+/**
+ * Class used to setup and implement the EventLogActivity
+ */
 public class EventLogActivity extends AppCompatActivity {
 
     private static final String TAG = "EventLogActivity";
@@ -38,17 +43,31 @@ public class EventLogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_log);
         Log.d(TAG, "onCreate Called!");
+        String receivedLevel = "user";
 
         Intent intentBackgroundService = new Intent(this, PushNotificationService.class);
         startService(intentBackgroundService);
 
+        //Collecting extras
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            receivedLevel = extras.getString("level");
+        }
+
         eventsController = new EventsController(getApplicationContext());
+
+        //Setting user level on controller
+        eventsController.setUserLevel(receivedLevel);
 
         setupUI();
         setupRecyclerView();
         eventsController.setupEventsRealtime(getApplicationContext(), eventsRecyclerViewAdapter, this);
     }
 
+    /**
+     * Method used to setup the UI of the EventLogActivity
+     * @throws JSONException
+     */
     private void setupUI() {
         actionBar = getSupportActionBar();
 
@@ -56,12 +75,19 @@ public class EventLogActivity extends AppCompatActivity {
         actionBar.setHomeButtonEnabled(true);
     }
 
+    /**
+     * Method used to switch to the SavedEvents Activity
+     * @param eventId
+     */
     protected void goToSavedEventsActivity(String eventId) {
         Intent intent = new Intent(this, SavedEventsActivity.class);
         intent.putExtra("eventId", eventId);
         startActivity(intent);
     }
 
+    /**
+     * Method used to setup the Recycler View containing all logged Events
+     */
     private void setupRecyclerView() {
         eventsRecyclerView = findViewById(R.id.eventsRecyclerView);
         eventsRecyclerViewAdapter = new EventsRecyclerViewAdapter(getApplicationContext(), this);

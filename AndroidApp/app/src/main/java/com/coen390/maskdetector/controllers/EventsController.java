@@ -33,6 +33,7 @@ public class EventsController {
     private Context context;
     private Client client;
     private Database db;
+    static private String userLevel;
 
     public EventsController(Context context) {
         this.context = context;
@@ -42,7 +43,6 @@ public class EventsController {
 
     public void getEventsList(EventsRecyclerViewAdapter eventsRecyclerViewAdapter, EventLogActivity eventLogActivity, List<Event> events){
         List<String> filters = new ArrayList<String>();
-        filters.add("organizationId=testOrganization"); // TODO: check the user's organization
         try {
             db.listDocuments(
                     "61871d8957bbc", // Collection ID
@@ -230,5 +230,13 @@ public class EventsController {
         } catch (AppwriteException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setUserLevel(String l){
+        EventsController.userLevel = l;
+    }
+
+    public String getUserLevel(){
+        return  EventsController.userLevel;
     }
 }

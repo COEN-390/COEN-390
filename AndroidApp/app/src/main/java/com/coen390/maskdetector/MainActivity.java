@@ -17,7 +17,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.lifecycle.Lifecycle;
@@ -31,6 +30,9 @@ import org.json.JSONObject;
 
 import io.appwrite.exceptions.AppwriteException;
 
+/**
+ * Class used to setup and implement the MainActivity
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
@@ -44,14 +46,10 @@ public class MainActivity extends AppCompatActivity {
     private Button devicesButton;
     private Button usersButton;
     private Button savedEventsButton;
-    private Button testButton;
 
     private TextView userModeView;
     private TextView userEmailView;
 
-    private Bundle bundle;
-
-    // Notification channel ID. Put it somewhere better
     private String defaultChannel = "defaultChannel";
 
     @Override
@@ -88,6 +86,10 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
     }
 
+    /**
+     * Method used to setup the UI of the MainActivity
+     * @throws JSONException
+     */
     private void setupUI() throws JSONException {
 
         JSONObject z = sharedPreferencesHelper.getUser();
@@ -125,8 +127,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // Must do at the start before notifications can happen. Maybe put in main
-    // activity onCreate() ?
+    /**
+     * Method used to create a notification channel
+     */
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
 
@@ -170,6 +173,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method used to manage user options menu in MainActivity
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
@@ -184,6 +192,9 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Method used to switch to the login activity
+     */
     private void goToLoginActivity() {
         Intent intent = new Intent(this, LoginActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
@@ -191,8 +202,20 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Button Listeners
+     */
+
     private final Button.OnClickListener onClickEventLogButton = view -> {
         Intent intent = new Intent(this, EventLogActivity.class);
+
+        //Sending User Level
+        try{
+            intent.putExtra("level", getUserMode());
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         startActivity(intent);
     };
 
@@ -227,12 +250,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
-    private final Button.OnClickListener onClickTestButton = view -> {
-        JSONObject j = sharedPreferencesHelper.getUser();
-        String x = j.toString();
-
-    };
-
+    /**
+     * Method used to logout the current user
+     */
     private void logout() {
         authenticationController.endSession();
         sharedPreferencesHelper.setUser("");
@@ -240,6 +260,9 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * DEPRECATED -- Method used to call a fragment asking for confirmation to delete the logged user
+     */
     private void userDelete(){
         FragmentManager fragmentManager = getSupportFragmentManager();
         DeleteEventPromptDf deleteEventPromptDf = new DeleteEventPromptDf();
@@ -267,6 +290,11 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager.setFragmentResultListener("delete", deleteEventPromptDf, listener);
     }
 
+    /**
+     * Method used to obtain the currently logged user's level
+     * @return
+     * @throws JSONException
+     */
     private String getUserMode() throws JSONException {
         JSONObject j = sharedPreferencesHelper.getUser();
         if (j != null) {
@@ -283,6 +311,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Method used to obtain the currently logged user's email
+     * @return
+     * @throws JSONException
+     */
     private String getUserEmail() throws JSONException {
         JSONObject j = sharedPreferencesHelper.getUser();
         String k = j.getString("email");

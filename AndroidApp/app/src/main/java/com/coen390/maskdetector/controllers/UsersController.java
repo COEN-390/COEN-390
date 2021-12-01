@@ -244,12 +244,11 @@ public class UsersController {
         }
     }
 
-    public void createUser(String name, String email, String organizationId, String userLevel){
+    public void createUser(String name, String email, String userLevel){
         // Create the map of values
         Map<String, Object> values = new HashMap<>();
         values.put("name", name);
         values.put("email", email);
-        values.put("organizationId", organizationId);
         values.put("userLevel", userLevel);
 
         // Create the permissions (write so that the admin can change the event's name)

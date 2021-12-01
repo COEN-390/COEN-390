@@ -16,6 +16,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Class used to setup and implement the UsersActivity
+ */
 public class UsersActivity extends AppCompatActivity {
 
     private ActionBar actionBar;
@@ -36,6 +39,9 @@ public class UsersActivity extends AppCompatActivity {
         usersController.setupUsersRealtime(getApplicationContext(), usersRecyclerViewAdapter, this);
     }
 
+    /**
+     * Method used to setup the UI of the UsersActivity
+     */
     private void setupUI(){
         actionBar = getSupportActionBar();
         fabCreateUser = findViewById(R.id.fabCreateUser);
@@ -46,6 +52,9 @@ public class UsersActivity extends AppCompatActivity {
         fabCreateUser.setOnClickListener(view -> new CreateUserDf().show(getSupportFragmentManager(), "CreateUserDf"));
     }
 
+    /**
+     * Method used to setup the Recycler View containing all registered users
+     */
     protected void setupRecyclerView(){
         usersRecyclerView = findViewById(R.id.usersRecyclerView);
         usersRecyclerViewAdapter = new UsersRecyclerViewAdapter(getApplicationContext(), this);

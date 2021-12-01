@@ -16,6 +16,9 @@ import java.sql.Timestamp;
 
 import io.appwrite.exceptions.AppwriteException;
 
+/**
+ * Class used to setup and implement the LoginActivity
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private EditText emailEditText;
@@ -33,6 +36,9 @@ public class LoginActivity extends AppCompatActivity {
         setupUI();
     }
 
+    /**
+     * Method used to setup the UI of the LoginActivity
+     */
     private void setupUI(){
         emailEditText = findViewById(R.id.email_edit_text);
         passwordEditText = findViewById(R.id.password_edit_text);
@@ -61,6 +67,9 @@ public class LoginActivity extends AppCompatActivity {
             loading.startLoading();
         });
 
+        /**
+         * Button Listener
+         */
         newAccountButton.setOnClickListener(view -> {
             String email = emailEditText.getText().toString();
             String password = passwordEditText.getText().toString();

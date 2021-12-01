@@ -100,7 +100,7 @@ public class AuthenticationController {
                 }
         );
 
-        usersController.createUser(name, email, "id", "user"); //TODO: setup organization ID
+        usersController.createUser(name, email, "user"); //TODO: setup organization ID
 
         System.out.println("User should be done now");
         return result[0];
@@ -167,7 +167,7 @@ public class AuthenticationController {
             }
         }
 
-        usersController.createUser("admin", email, "id", "admin"); //TODO: setup organization ID
+        usersController.createUser("admin", email, "admin"); //TODO: setup organization ID
 
         System.out.println("User should be done now");
 
@@ -176,7 +176,7 @@ public class AuthenticationController {
     }
 
     /**
-     * Method used to delete an existing user from the Appwrite Users list
+     * DEPRECATED -- Method used to delete an existing user from the Appwrite Users list
      * @return Result of the operation (Success or failure)
      * @throws AppwriteException
      * @throws JSONException
