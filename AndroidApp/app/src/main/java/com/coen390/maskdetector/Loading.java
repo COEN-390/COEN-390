@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.text.Layout;
 import android.view.LayoutInflater;
-
+/**
+    Loading Spinner. Used Dialogs and progress bar
+ */
 public class Loading {
 
     private Activity activity;

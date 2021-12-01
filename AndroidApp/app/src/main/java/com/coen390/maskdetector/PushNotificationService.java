@@ -25,7 +25,11 @@ import java.util.Map;
 
 import io.appwrite.Client;
 
-
+/**
+ * Class used for Firebase Cloud Messaging. Here a token is generated for firebase.
+ * Appwrite uses API endpoint and the project ID to have a connection once a mask is undetected.
+ * Notification is shown on background and foreground.
+ */
 public class PushNotificationService extends FirebaseMessagingService {
     private static final String TAG = "PushNotificationService" ;
 
