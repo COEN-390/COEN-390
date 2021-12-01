@@ -1,18 +1,13 @@
 package com.coen390.maskdetector;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
@@ -20,7 +15,6 @@ import androidx.fragment.app.FragmentResultListener;
 import com.coen390.maskdetector.controllers.EventsController;
 import com.coen390.maskdetector.controllers.SavedEventsController;
 import com.coen390.maskdetector.controllers.VideoClipController;
-import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
 import com.coen390.maskdetector.models.Event;
 import com.coen390.maskdetector.models.SavedEvent;
 
@@ -33,7 +27,6 @@ public class EventActionPromptDf extends DialogFragment {
     private EventsController eventsController;
     private SavedEventsController savedEventsController;
     private VideoClipController videoClipController;
-    private TextView locationChange1;
     private Event event;
     private SavedEvent savedEvent;
     private Bundle bundle;
@@ -49,7 +42,6 @@ public class EventActionPromptDf extends DialogFragment {
         cancelPromptButton = view.findViewById(R.id.buttonCancelPrompt);
         deleteEventPromptButton = view.findViewById(R.id.buttonDeleteEventPrompt);
         saveVideoButton = view.findViewById(R.id.buttonVideoView);
-        locationChange1 = view.findViewById(R.id.locationChange);
 
         bundle = getArguments();
 
