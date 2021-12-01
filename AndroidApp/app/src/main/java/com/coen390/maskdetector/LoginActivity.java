@@ -45,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         loginButton = findViewById(R.id.login_button);
         newAccountButton = findViewById(R.id.newAccount);
 
+        //loading spinner
         Loading loading = new Loading(LoginActivity.this);
 
 
@@ -64,6 +65,7 @@ public class LoginActivity extends AppCompatActivity {
                 System.out.println(e.getCode());
                 System.out.println(e.getResponse());
             }
+            //loading spinner
             loading.startLoading();
         });
 
@@ -80,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
                 System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
                 System.out.println(e.getMessage());
             }
+            // loading spinner
             loading.startLoading();
         });
 

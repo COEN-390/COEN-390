@@ -23,6 +23,10 @@ import io.appwrite.exceptions.AppwriteException;
 public class CreateUserDf extends DialogFragment {
 
 
+    /**
+     * Class to create User. pop-up where you can type in all the attributes declared.
+     * Once saved, it is is on the Appwrite database and can be viewed on the app under Users.
+     */
     private EditText editName, editEmail, editPassword;
     private Button saveButton, cancelButton;
     private SharedPreferencesHelper sharedPreferencesHelper;
@@ -71,6 +75,7 @@ public class CreateUserDf extends DialogFragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                    //loading spinner
                     loading.startLoading();
                 }
 
@@ -85,6 +90,7 @@ public class CreateUserDf extends DialogFragment {
                     public void run() {
                         ((UsersActivity) requireActivity()).setupRecyclerView();
                         dismiss();
+                        //dismiss loading spinner
                         loading.dismissLoading();
                     }
                 }, 5000);
