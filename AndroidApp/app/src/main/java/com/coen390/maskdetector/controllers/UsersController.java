@@ -6,7 +6,6 @@ import android.widget.Toast;
 
 import com.coen390.maskdetector.UsersActivity;
 import com.coen390.maskdetector.UsersRecyclerViewAdapter;
-import com.coen390.maskdetector.models.Event;
 import com.coen390.maskdetector.models.User;
 
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +42,7 @@ public class UsersController {
 
     public void getUsersList(UsersRecyclerViewAdapter usersRecyclerViewAdapter, UsersActivity usersActivity, List<User> users){
         List<String> filters = new ArrayList<String>();
-        filters.add("organizationId=testOrganization"); // TODO: check the user's organization
+//        filters.add("organizationId=testOrganization"); // TODO: check the user's organization
         try {
             db.listDocuments(
                     "616c952eb6396", // Collection ID
