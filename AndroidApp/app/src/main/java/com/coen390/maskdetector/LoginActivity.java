@@ -1,6 +1,7 @@
 package com.coen390.maskdetector;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -44,6 +45,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEditText = findViewById(R.id.password_edit_text);
         loginButton = findViewById(R.id.login_button);
         newAccountButton = findViewById(R.id.newAccount);
+        newAccountButton.setVisibility(View.INVISIBLE);
 
         //loading spinner
         Loading loading = new Loading(LoginActivity.this);
@@ -70,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         /**
-         * Button Listener
+         * DEPRECATED -- Button Listener
          */
         newAccountButton.setOnClickListener(view -> {
             String email = emailEditText.getText().toString();
