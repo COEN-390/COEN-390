@@ -35,6 +35,7 @@ public class SavedEventsController {
     private Client client;
     private Database db;
     private EventsController eventsController;
+    static private String userLevel;
 
     public SavedEventsController(Context context) {
         this.context = context;
@@ -285,6 +286,14 @@ public class SavedEventsController {
         } catch (AppwriteException e) {
             e.printStackTrace();
         }
+    }
+
+    public void setUserLevel(String l){
+        SavedEventsController.userLevel = l;
+    }
+
+    public String getUserLevel(){
+        return  SavedEventsController.userLevel;
     }
 
 }

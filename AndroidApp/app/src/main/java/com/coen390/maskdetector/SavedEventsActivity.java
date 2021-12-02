@@ -31,7 +31,17 @@ public class SavedEventsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_saved_events);
 
+        String receivedLevel = "admin";
+
+        //Collecting extras
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            receivedLevel = extras.getString("level");
+        }
+
         savedEventsController = new SavedEventsController(getApplicationContext());
+
+        savedEventsController.setUserLevel(receivedLevel);
 
         setupUI();
         setupRecyclerView();

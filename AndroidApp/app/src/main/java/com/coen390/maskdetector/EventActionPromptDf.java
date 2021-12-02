@@ -12,8 +12,10 @@ import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
 
+import com.coen390.maskdetector.controllers.AuthenticationController;
 import com.coen390.maskdetector.controllers.EventsController;
 import com.coen390.maskdetector.controllers.SavedEventsController;
+import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
 import com.coen390.maskdetector.controllers.VideoClipController;
 import com.coen390.maskdetector.models.Event;
 import com.coen390.maskdetector.models.SavedEvent;
@@ -24,6 +26,7 @@ import org.json.JSONObject;
 public class EventActionPromptDf extends DialogFragment {
 
     private Button savedEventPromptButton, cancelPromptButton, deleteEventPromptButton, saveVideoButton;
+    private SharedPreferencesHelper sharedPreferencesHelper;
     private EventsController eventsController;
     private SavedEventsController savedEventsController;
     private VideoClipController videoClipController;
@@ -113,7 +116,9 @@ public class EventActionPromptDf extends DialogFragment {
 
     private void setupButtons(){
 
-        if (eventsController.getUserLevel().equals("user")){
+        String userLevel = AuthenticationController.userLevel;
+
+        if (userLevel.equals("user")){
             savedEventPromptButton.setVisibility(View.INVISIBLE);
             deleteEventPromptButton.setVisibility(View.INVISIBLE);
         }

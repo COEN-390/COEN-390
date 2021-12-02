@@ -42,6 +42,7 @@ public class AuthenticationController {
     private static final String TAG = "AuthenticationController";
     private final int[] zzz = {0}; //to sync account creation threads :)
     private UsersController usersController;
+    public static String userLevel = "user";
 
     public AuthenticationController(Context context) {
         this.context = context;

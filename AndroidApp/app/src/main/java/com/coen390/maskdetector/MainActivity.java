@@ -72,6 +72,12 @@ public class MainActivity extends AppCompatActivity {
             startService(intentBackgroundService);
             createNotificationChannel();
         }
+
+        try {
+            AuthenticationController.userLevel = getUserMode();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
