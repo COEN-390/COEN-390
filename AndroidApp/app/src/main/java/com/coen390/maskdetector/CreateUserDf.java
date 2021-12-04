@@ -19,14 +19,12 @@ import com.coen390.maskdetector.controllers.SharedPreferencesHelper;
 import org.json.JSONException;
 
 import io.appwrite.exceptions.AppwriteException;
-
+/**
+ * Class to create User pop-up where you can type in all the attributes declared.
+ * Once saved, it is is on the Appwrite database and can be viewed on the app under Users.
+ */
 public class CreateUserDf extends DialogFragment {
 
-
-    /**
-     * Class to create User. pop-up where you can type in all the attributes declared.
-     * Once saved, it is is on the Appwrite database and can be viewed on the app under Users.
-     */
     private EditText editName, editEmail, editPassword;
     private Button saveButton, cancelButton;
     private SharedPreferencesHelper sharedPreferencesHelper;
@@ -48,7 +46,7 @@ public class CreateUserDf extends DialogFragment {
         authenticationController = new AuthenticationController(getContext());
 
         saveButton.setOnClickListener(new View.OnClickListener() {
-            Loading loading = new Loading(getActivity());
+            LoadingSpinnerView loadingSpinnerView = new LoadingSpinnerView(getActivity());
             @Override
             public void onClick(View view) {
                 // Temporary save text
@@ -75,23 +73,17 @@ public class CreateUserDf extends DialogFragment {
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    //loading spinner
-                    loading.startLoading();
+                    //loadingSpinnerView spinner
+                    loadingSpinnerView.startLoading();
                 }
 
-//                if(databaseHelper.getProfile(studentId) != null){
-//                    Toast.makeText(getContext(), "Student ID already exists", Toast.LENGTH_LONG).show();
-//                    return;
-//                } //TODO: check if the user exists by email (unless it's done automatically by Appwrite)
-
-                // TODO: add a loading icon while waiting (DONE)
                 (new Handler()).postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         ((UsersActivity) requireActivity()).setupRecyclerView();
                         dismiss();
-                        //dismiss loading spinner
-                        loading.dismissLoading();
+                        //dismiss loadingSpinnerView spinner
+                        loadingSpinnerView.dismissLoading();
                     }
                 }, 5000);
             }

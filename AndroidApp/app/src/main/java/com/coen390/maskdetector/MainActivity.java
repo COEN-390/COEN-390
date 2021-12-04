@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Log.d(TAG, "onCreate Called!");
 
-        //Loading loading = new Loading(MainActivity.this);
+        //LoadingSpinnerView loading = new LoadingSpinnerView(MainActivity.this);
 
         sharedPreferencesHelper = new SharedPreferencesHelper(getApplicationContext());
         authenticationController = new AuthenticationController(getApplicationContext());

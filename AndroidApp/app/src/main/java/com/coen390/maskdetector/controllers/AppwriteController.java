@@ -6,6 +6,9 @@ import io.appwrite.Client;
 import io.appwrite.services.Account;
 import io.appwrite.services.Database;
 
+/**
+ * Controller used to connect to the Appwrite server
+ */
 public class AppwriteController {
     private static String endpoint = "https://appwrite.orpine.net/v1";
     private static String project = "6137a2ef0d4f5";

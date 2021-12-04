@@ -17,6 +17,9 @@ import java.util.List;
 import io.appwrite.Client;
 import io.appwrite.services.Database;
 
+/**
+ * Recycler View Adapter for Devices
+ */
 public class DevicesRecyclerViewAdapter extends RecyclerView.Adapter<DevicesRecyclerViewAdapter.ViewHolder> {
 
     private Context context;
@@ -60,7 +63,12 @@ public class DevicesRecyclerViewAdapter extends RecyclerView.Adapter<DevicesRecy
         this.devices = new ArrayList<>();
     }
 
-    // Create new views (invoked by the layout manager)
+    /**
+     * Create new views (invoked by the layout manager)
+     * @param viewGroup
+     * @param viewType
+     * @return
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         // Create a new view, which defines the UI of the list item
@@ -70,7 +78,11 @@ public class DevicesRecyclerViewAdapter extends RecyclerView.Adapter<DevicesRecy
         return new ViewHolder(view);
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
+    /**
+     * Replace the contents of a view (invoked by the layout manager)
+     * @param viewHolder
+     * @param position
+     */
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
 
@@ -84,7 +96,10 @@ public class DevicesRecyclerViewAdapter extends RecyclerView.Adapter<DevicesRecy
         viewHolder.getDeviceHealthTextView().setTextColor(healthy ? 0xff00ff00 : 0xffff0000);
     }
 
-    // Return the size of your dataset (invoked by the layout manager)
+    /**
+     * Return the size of your dataset (invoked by the layout manager)
+     * @return
+     */
     @Override
     public int getItemCount() {
         return devices.size();

@@ -29,6 +29,9 @@ import kotlin.coroutines.CoroutineContext;
 import kotlin.coroutines.EmptyCoroutineContext;
 import okhttp3.Response;
 
+/**
+ * Controller used for Devices Monitoring
+ */
 public class UsersController {
     private Context context;
     private Client client;
@@ -40,9 +43,14 @@ public class UsersController {
         this.db = new Database(this.client);
     }
 
+    /**
+     * Method used to obtain the list of Existing Users
+     * @param usersRecyclerViewAdapter
+     * @param usersActivity
+     * @param users
+     */
     public void getUsersList(UsersRecyclerViewAdapter usersRecyclerViewAdapter, UsersActivity usersActivity, List<User> users){
         List<String> filters = new ArrayList<String>();
-//        filters.add("organizationId=testOrganization"); // TODO: check the user's organization
         try {
             db.listDocuments(
                     "616c952eb6396", // Collection ID
@@ -105,9 +113,12 @@ public class UsersController {
         }
     }
 
+    /**
+     * DEPRECATED -- Method used to remove a user from the collection
+     * @param email
+     */
     public void deleteUserFromCollection(String email){
         List<String> filters = new ArrayList<String>();
-        filters.add("organizationId=testOrganization"); // TODO: check the user's organization
         filters.add("email=" + email);
         try {
             db.listDocuments(
@@ -159,6 +170,12 @@ public class UsersController {
         }
     }
 
+    /**
+     * Method used to setup the recycler view containing the users list
+     * @param context
+     * @param usersRecyclerViewAdapter
+     * @param usersActivity
+     */
     public void setupUsersRealtime(Context context, UsersRecyclerViewAdapter usersRecyclerViewAdapter, UsersActivity usersActivity) {
         // Create the connection to the Appwrite server's realtime functionality
         Realtime usersListener = new Realtime(AppwriteController.getClient(context));
@@ -168,8 +185,6 @@ public class UsersController {
             String eventType = param.getEvent();
             Date timestamp = new Date(param.getTimestamp());
             User user = param.getPayload();
-            // Check if the modification is not for the user's organization, quit the realtime update
-            if(!user.getOrganizationId().equals("testOrganization")) return null; // TODO: check the user's organization
 
             System.out.println(timestamp.toString() + ": " + eventType);
             // If a user gets created, add it to the saved list of users
@@ -209,6 +224,10 @@ public class UsersController {
         });
     }
 
+    /**
+     * DEPRECATED -- Method used to delete a user
+     * @param user
+     */
     public void deleteUser(User user){
         try {
             db.deleteDocument(
@@ -243,6 +262,12 @@ public class UsersController {
         }
     }
 
+    /**
+     * Method used to create a new user
+     * @param name
+     * @param email
+     * @param userLevel
+     */
     public void createUser(String name, String email, String userLevel){
         // Create the map of values
         Map<String, Object> values = new HashMap<>();

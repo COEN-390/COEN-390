@@ -24,6 +24,9 @@ import kotlin.coroutines.CoroutineContext;
 import kotlin.coroutines.EmptyCoroutineContext;
 import okhttp3.Response;
 
+/**
+ * Controller used for Saved Events Monitoring
+ */
 public class VideoClipController {
     private Context context;
     private Client client;
@@ -35,6 +38,11 @@ public class VideoClipController {
         this.storage = new Storage(this.client);
     }
 
+    /**
+     * Method used to Download the video file pressed on
+     * @param fileId
+     * @param fileName
+     */
     public void downloadFile(String fileId, String fileName) {
         try {
             storage.getFileDownload(
@@ -56,14 +64,6 @@ public class VideoClipController {
                             Response response = (Response) o;
                             byte[] data = response.body().bytes();
                             saveData(data, fileName + ".mp4");
-//                            File file = new File(context.getFilesDir(), fileName);
-//                            try (FileOutputStream fos = context.openFileOutput(fileName + ".mp4", Context.MODE_PRIVATE)) {
-//                                fos.write(data);
-//                            }
-//                            MediaPlayer mp = new MediaPlayer();
-//                            mp.setDataSource(context.getFilesDir() + "/" + fileName + ".mp4");
-//                            mp.prepare();
-//                            mp.start();
                         }
                     } catch (AppwriteException e) {
                         e.printStackTrace();
@@ -79,6 +79,10 @@ public class VideoClipController {
         }
     }
 
+    /**
+     * Method to check if the environment is mounted
+     * @return
+     */
     public boolean isExternalStorageWritable() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state)) {
@@ -87,6 +91,10 @@ public class VideoClipController {
         return false;
     }
 
+    /**
+     * Method to check if the environment is mounted for Read only
+     * @return
+     */
     public boolean isExternalStorageReadable() {
         String state = Environment.getExternalStorageState();
         if (Environment.MEDIA_MOUNTED.equals(state) ||
@@ -96,6 +104,11 @@ public class VideoClipController {
         return false;
     }
 
+    /**
+     * Method used to save a file
+     * @param data
+     * @param fileName
+     */
     private void saveData(byte[] data, String fileName){
 
         File file = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -131,6 +144,10 @@ public class VideoClipController {
         openFile(file);
     }
 
+    /**
+     * Method used to open a file
+     * @param file
+     */
     public void openFile(File file) {
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

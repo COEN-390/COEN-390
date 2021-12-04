@@ -8,6 +8,9 @@ import com.coen390.maskdetector.R;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Controller used for data storage through shared preferences
+ */
 public class SharedPreferencesHelper {
 
     private SharedPreferences sharedPreferences;

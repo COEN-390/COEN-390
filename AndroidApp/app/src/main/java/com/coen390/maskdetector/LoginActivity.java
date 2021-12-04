@@ -47,8 +47,8 @@ public class LoginActivity extends AppCompatActivity {
         newAccountButton = findViewById(R.id.newAccount);
         newAccountButton.setVisibility(View.INVISIBLE);
 
-        //loading spinner
-        Loading loading = new Loading(LoginActivity.this);
+        //loadingSpinnerView spinner
+        LoadingSpinnerView loadingSpinnerView = new LoadingSpinnerView(LoginActivity.this);
 
 
         authenticationController = new AuthenticationController(getApplicationContext());
@@ -67,8 +67,8 @@ public class LoginActivity extends AppCompatActivity {
                 System.out.println(e.getCode());
                 System.out.println(e.getResponse());
             }
-            //loading spinner
-            loading.startLoading();
+            //loadingSpinnerView spinner
+            loadingSpinnerView.startLoading();
         });
 
         /**
@@ -84,8 +84,8 @@ public class LoginActivity extends AppCompatActivity {
                 System.out.println("createSession() " + new Timestamp(System.currentTimeMillis()));
                 System.out.println(e.getMessage());
             }
-            // loading spinner
-            loading.startLoading();
+            // loadingSpinnerView spinner
+            loadingSpinnerView.startLoading();
         });
 
     }

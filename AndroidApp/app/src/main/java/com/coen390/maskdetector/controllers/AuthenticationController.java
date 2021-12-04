@@ -33,6 +33,9 @@ import kotlin.coroutines.CoroutineContext;
 import kotlin.coroutines.EmptyCoroutineContext;
 import okhttp3.Response;
 
+/**
+ * Controller used for User Authentication
+ */
 public class AuthenticationController {
     private Context context;
     private Client client;
@@ -55,6 +58,15 @@ public class AuthenticationController {
         this.db = new Database(this.client);
     }
 
+    /**
+     * Method used for Generic user creation
+     * @param email
+     * @param password
+     * @param name
+     * @return
+     * @throws AppwriteException
+     * @throws JSONException
+     */
     public String createUser(String email, String password, String name) throws AppwriteException, JSONException {
         final String[] result = {"ERROR: SOMETHING WENT WRONG"};
         zzz[0] = 0;
@@ -101,12 +113,20 @@ public class AuthenticationController {
                 }
         );
 
-        usersController.createUser(name, email, "user"); //TODO: setup organization ID
+        usersController.createUser(name, email, "user");
 
         System.out.println("User should be done now");
         return result[0];
     }
 
+    /**
+     * Method used for Admin user creation
+     * @param email
+     * @param password
+     * @return
+     * @throws AppwriteException
+     * @throws JSONException
+     */
     public String createAdmin(String email, String password) throws AppwriteException, JSONException {
 
         final String[] result = {"ERROR: SOMETHING WENT WRONG"};
@@ -217,6 +237,13 @@ public class AuthenticationController {
         return result[0];
     }
 
+    /**
+     * Method used to set the user level of a user
+     * @param x
+     * @return
+     * @throws AppwriteException
+     * @throws JSONException
+     */
     public int setUserLevel(String x) throws AppwriteException, JSONException {
         JSONObject pref = new JSONObject("{'userType':'" + x + "'}");
         account.updatePrefs(
@@ -259,6 +286,12 @@ public class AuthenticationController {
         return 1;
     }
 
+    /**
+     * Method used to create login session
+     * @param email
+     * @param password
+     * @throws AppwriteException
+     */
     public void createSession(String email, String password) throws AppwriteException {
         // Create the session
         int[] q = {0};
@@ -307,6 +340,9 @@ public class AuthenticationController {
         });
     }
 
+    /**
+     * Method used to end the login session
+     */
     public void endSession() {
         try {
             account.deleteSession("current", new Continuation<Object>() {
@@ -347,6 +383,10 @@ public class AuthenticationController {
         }
     }
 
+    /**
+     * Method used to get Account
+     * @return
+     */
     public int getAccount() {
         System.out.println("Starting getAccount()");
         int[] q = {0};
@@ -397,10 +437,10 @@ public class AuthenticationController {
     }
 
     /**
+     * DEPRECATED -- Method used to obtain the token for the app instance
      * Method used to obtain token for app Taken from:
      * https://stackoverflow.com/a/66696714
      */
-
     private void tokenCall() {
         FirebaseMessaging.getInstance().getToken().addOnCompleteListener(new OnCompleteListener<String>() {
             @Override
@@ -418,6 +458,9 @@ public class AuthenticationController {
         });
     }
 
+    /**
+     * Method used to subscribe the token
+     */
     private void subscribeToken() {
         Functions functions = new Functions(client);
 

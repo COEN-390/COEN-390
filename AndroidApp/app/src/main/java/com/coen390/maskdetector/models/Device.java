@@ -1,5 +1,8 @@
 package com.coen390.maskdetector.models;
 
+/**
+ * Model for the Devices
+ */
 public class Device {
     private String deviceId;
     private String organizationId;

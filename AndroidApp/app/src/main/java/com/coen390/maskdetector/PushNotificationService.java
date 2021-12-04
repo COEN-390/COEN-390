@@ -52,7 +52,7 @@ public class PushNotificationService extends FirebaseMessagingService {
                 .setProject("6137a2ef0d4f5"); // Your project ID
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O) // TODO- ensure this doesn't mess shit up
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
@@ -65,7 +65,7 @@ public class PushNotificationService extends FirebaseMessagingService {
             Notification notification = new Notification.Builder(this, defaultChannel)
                     .setContentTitle(data.get("Title"))
                     .setContentText(data.get("Body"))
-                    .setSmallIcon(R.mipmap.ic_launcher_icon) // TODO - Icon not showing properly???
+                    .setSmallIcon(R.mipmap.ic_launcher_icon)
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setContentIntent(pendingIntent)
                     .setShowWhen(true)
@@ -73,7 +73,7 @@ public class PushNotificationService extends FirebaseMessagingService {
                     .build();
 
             NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-            notificationManager.notify( 1, notification); // TODO - Ensure that hard coded ID doesn't mess anything
+            notificationManager.notify( 1, notification);
 
         }else{
             super.onMessageReceived(remoteMessage);

@@ -5,16 +5,15 @@ import android.app.AlertDialog;
 import android.text.Layout;
 import android.view.LayoutInflater;
 /**
-    Loading Spinner. Used Dialogs and progress bar
+    LoadingSpinnerView Spinner. Used Dialogs and progress bar
  */
-public class Loading {
+public class LoadingSpinnerView {
 
     private Activity activity;
     private AlertDialog dialog;
 
-    Loading(Activity myActivity) {
+    LoadingSpinnerView(Activity myActivity) {
         activity = myActivity;
-
     }
 
     void startLoading() {
@@ -28,7 +27,6 @@ public class Loading {
 
         dialog = builder.create();
         dialog.show();
-
     }
 
     void dismissLoading() {

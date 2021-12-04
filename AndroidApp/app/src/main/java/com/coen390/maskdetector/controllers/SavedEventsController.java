@@ -30,6 +30,9 @@ import kotlin.coroutines.CoroutineContext;
 import kotlin.coroutines.EmptyCoroutineContext;
 import okhttp3.Response;
 
+/**
+ * Controller used for Saved Events Monitoring
+ */
 public class SavedEventsController {
     private Context context;
     private Client client;
@@ -44,9 +47,14 @@ public class SavedEventsController {
         this.eventsController = new EventsController(context);
     }
 
+    /**
+     * Method used to obtain the list of saved events
+     * @param savedEventsRecyclerViewAdapter
+     * @param savedEventsActivity
+     * @param events
+     */
     public void getSavedEventsList(SavedEventsRecyclerViewAdapter savedEventsRecyclerViewAdapter, SavedEventsActivity savedEventsActivity, List<SavedEvent> events){
         List<String> filters = new ArrayList<String>();
-        filters.add("organizationId=testOrganization"); // TODO: check the user's organization
         try {
             db.listDocuments(
                     "61968895f33a0", // Collection ID
@@ -109,6 +117,12 @@ public class SavedEventsController {
         }
     }
 
+    /**
+     * Method used to setup the recycler view containing the saved events list
+     * @param context
+     * @param savedEventsRecyclerViewAdapter
+     * @param savedEventsActivity
+     */
     public void setupSavedEventsRealtime(Context context, SavedEventsRecyclerViewAdapter savedEventsRecyclerViewAdapter, SavedEventsActivity savedEventsActivity) {
         // Create the connection to the Appwrite server's realtime functionality
         Realtime savedEventsListener = new Realtime(AppwriteController.getClient(context));
@@ -118,8 +132,6 @@ public class SavedEventsController {
             String eventType = param.getEvent();
             Date timestamp = new Date(param.getTimestamp());
             SavedEvent savedEvent = param.getPayload();
-            // Check if the modification is not for the user's organization, quit the realtime update
-            if(!savedEvent.getOrganizationId().equals("testOrganization")) return null; // TODO: check the user's organization
 
             System.out.println(timestamp.toString() + ": " + eventType);
             // If an event gets created, add it to the saved list of events
@@ -160,6 +172,11 @@ public class SavedEventsController {
         });
     }
 
+    /**
+     * Method used to register logged events as saved events
+     * @param name
+     * @param event
+     */
     public void createSavedEvent(String name, Event event){
         // Create the map of values
         Map<String, Object> values = new HashMap<>();
@@ -210,6 +227,9 @@ public class SavedEventsController {
         }
     }
 
+    /**
+     * Method used to update the contents of a saved event log
+     */
     public void updateSavedEvent(SavedEvent savedEvent) {
         // Create the map of values
         Map<String, Object> values = new HashMap<>();
@@ -253,6 +273,10 @@ public class SavedEventsController {
         }
     }
 
+    /**
+     * Method used to delete a saved event
+     * @param savedEvent
+     */
     public void deleteSavedEvent(SavedEvent savedEvent){
         try {
             db.deleteDocument(
@@ -288,12 +312,11 @@ public class SavedEventsController {
         }
     }
 
+    /**
+     * Method used to keep track of the current user level
+     * @param l
+     */
     public void setUserLevel(String l){
         SavedEventsController.userLevel = l;
     }
-
-    public String getUserLevel(){
-        return  SavedEventsController.userLevel;
-    }
-
 }

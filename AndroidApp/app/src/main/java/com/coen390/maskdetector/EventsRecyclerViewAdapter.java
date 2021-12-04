@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Recycler View Adapter for Event Logs
+ */
 public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecyclerViewAdapter.ViewHolder> {
 
     private List<Event> events;
@@ -67,7 +70,6 @@ public class EventsRecyclerViewAdapter extends RecyclerView.Adapter<EventsRecycl
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                // TODO: check if user is admin
                 int pos = holder.getLayoutPosition();
 
                 EventActionPromptDf eventActionPromptDf = new EventActionPromptDf();

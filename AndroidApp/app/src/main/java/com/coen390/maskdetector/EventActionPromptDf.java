@@ -23,6 +23,9 @@ import com.coen390.maskdetector.models.SavedEvent;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Class to setup the popup for clicking on logged and saved events
+ */
 public class EventActionPromptDf extends DialogFragment {
 
     private Button savedEventPromptButton, cancelPromptButton, deleteEventPromptButton, saveVideoButton;

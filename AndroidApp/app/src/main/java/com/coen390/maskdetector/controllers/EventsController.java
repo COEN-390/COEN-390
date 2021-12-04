@@ -29,6 +29,9 @@ import kotlin.coroutines.CoroutineContext;
 import kotlin.coroutines.EmptyCoroutineContext;
 import okhttp3.Response;
 
+/**
+ * Controller used for Events Monitoring
+ */
 public class EventsController {
     private Context context;
     private Client client;
@@ -41,6 +44,12 @@ public class EventsController {
         this.db = new Database(this.client);
     }
 
+    /**
+     * Method used to obtain the list of logged events
+     * @param eventsRecyclerViewAdapter
+     * @param eventLogActivity
+     * @param events
+     */
     public void getEventsList(EventsRecyclerViewAdapter eventsRecyclerViewAdapter, EventLogActivity eventLogActivity, List<Event> events){
         List<String> filters = new ArrayList<String>();
         try {
@@ -105,6 +114,12 @@ public class EventsController {
         }
     }
 
+    /**
+     * Method used to setup the recycler view containing the events list
+     * @param context
+     * @param eventsRecyclerViewAdapter
+     * @param eventLogActivity
+     */
     public void setupEventsRealtime(Context context, EventsRecyclerViewAdapter eventsRecyclerViewAdapter, EventLogActivity eventLogActivity) {
         // Create the connection to the Appwrite server's realtime functionality
         Realtime eventsListener = new Realtime(AppwriteController.getClient(context));
@@ -115,7 +130,7 @@ public class EventsController {
             Date timestamp = new Date(param.getTimestamp());
             Event event = param.getPayload();
             // Check if the modification is not for the user's organization, quit the realtime update
-            if(!event.getOrganizationId().equals("testOrganization")) return null; // TODO: check the user's organization
+            if(!event.getOrganizationId().equals("testOrganization")) return null;
 
             System.out.println(timestamp.toString() + ": " + eventType);
             // If an event gets created, add it to the saved list of events
@@ -156,6 +171,9 @@ public class EventsController {
         });
     }
 
+    /**
+     * Method used to update the contents of an event log
+     */
     public void updateEvent(Event event){
         // Create the map of values
         Map<String, Object> values = new HashMap<>();
@@ -198,6 +216,10 @@ public class EventsController {
         }
     }
 
+    /**
+     * Method used to delete a logged event
+     * @param event
+     */
     public void deleteEvent(Event event){
         try {
             db.deleteDocument(
@@ -232,11 +254,11 @@ public class EventsController {
         }
     }
 
+    /**
+     * Method used to keep track of the current user level
+     * @param l
+     */
     public void setUserLevel(String l){
         EventsController.userLevel = l;
-    }
-
-    public String getUserLevel(){
-        return  EventsController.userLevel;
     }
 }

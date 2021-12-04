@@ -20,6 +20,9 @@ import com.coen390.maskdetector.models.SavedEvent;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+/**
+ * Class for Saving events popup
+ */
 public class SaveEventDf extends DialogFragment {
 
     private EditText editSaveEventName;

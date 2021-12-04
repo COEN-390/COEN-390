@@ -9,6 +9,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * Model for the Saved Events
+ */
 public class SavedEvent {
 
     private String $id;

@@ -26,6 +26,9 @@ import kotlin.coroutines.CoroutineContext;
 import kotlin.coroutines.EmptyCoroutineContext;
 import okhttp3.Response;
 
+/**
+ * Controller used for Devices Monitoring
+ */
 public class DevicesController {
     private Context context;
     private Client client;
@@ -37,6 +40,12 @@ public class DevicesController {
         this.db = new Database(this.client);
     }
 
+    /**
+     * Method used to obtain the list of devices
+     * @param devicesRecyclerViewAdapter
+     * @param devicesActivity
+     * @throws AppwriteException
+     */
     public void getDeviceList(DevicesRecyclerViewAdapter devicesRecyclerViewAdapter, DevicesActivity devicesActivity) throws AppwriteException {
         db.listDocuments(
                 "61896dfa87e44",

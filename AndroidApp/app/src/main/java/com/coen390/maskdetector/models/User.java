@@ -9,6 +9,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+/**
+ * Model for the Users
+ */
 public class User {
     private String $id;
     private String $collection;

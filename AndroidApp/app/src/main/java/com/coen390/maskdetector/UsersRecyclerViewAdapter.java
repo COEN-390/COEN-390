@@ -14,6 +14,9 @@ import com.coen390.maskdetector.models.User;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Recycler View Adapter for the Users
+ */
 public class UsersRecyclerViewAdapter extends RecyclerView.Adapter<UsersRecyclerViewAdapter.ViewHolder> {
 
     private List<User> users;
