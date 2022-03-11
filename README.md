@@ -17,3 +17,6 @@ Our project idea is a mask detection system that sends alerts, and shows a video
 * Alexandre Vallières – 40157223
 
 
+Demo: https://youtu.be/NiLbCzr4SaY
+
+Public Test: https://youtu.be/8VVejX1V77A
